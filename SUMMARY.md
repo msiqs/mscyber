@@ -4,8 +4,6 @@
 
 ## Android Hacking
 * [Desmistificando Android Hacking](android-hacking/fundamentos.md)
-### Teste
-* [Desmistificando Android Hacking](android-hacking/fundamentos.md)
 
 ## Projetos
 * [Recon Auto](projetos/reconauto.md)
