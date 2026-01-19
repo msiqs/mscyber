@@ -3,7 +3,7 @@
 * [Início](README.md)
 
 ## Mobile Hacking
-* [Fundamentos](andorid-hacking/fundamentos.md)
+* [Fundamentos](android-hacking/fundamentos.md)
 
 ## Projetos
 * [Recon Auto](projetos/reconauto.md)
