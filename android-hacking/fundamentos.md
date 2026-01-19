@@ -8,7 +8,7 @@ Mobile hacking vem crescendo cada vez mais no que concerne estudos especializado
 Para atacar o Android, você precisa entender que ele é, na essência, um Linux paranoico... 
 
 ## Arquitetura e Segurança do Android
-Antes de atacar um reino, precisamos saber como funcionam as coisas do lado de dentro das muralhas... O android possui possuem componentes que são divididos em seis camadas, como ilustrado abaixo.
+Antes de atacar um reino, precisamos saber como funcionam as coisas do lado de dentro das muralhas... O android possui possui componentes que são divididos em seis camadas, como ilustrado abaixo.
 
 ![Figura 1 - Ilustração da arquitetura](image.png)
 
