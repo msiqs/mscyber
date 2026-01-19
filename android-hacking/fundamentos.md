@@ -8,5 +8,5 @@ Mobile hacking vem crescendo cada vez mais no que concerne estudos especializado
 Para atacar o Android, você precisa entender que ele é, na essência, um Linux paranoico... 
 
 ## Arquitetura e Segurança do Android
-![FIGURA 1](image.png)
+![Figura 1 - Ilustração da arquitetura](image.png)
 
