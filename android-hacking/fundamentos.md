@@ -12,5 +12,16 @@ Antes de atacar um reino, precisamos saber como funcionam as coisas do lado de d
 
 ![Figura 1 - Ilustração da arquitetura](image.png)
 
+### System Apps
+
+A camada de System Apps é a ponte entre o usuário e o controle total. Enquanto o Kernel e o HAL são difíceis de explorar remotamente, os System Apps são softwares complexos, cheios de funcionalidades e, estatisticamente, cheios de erros humanos de programação. Eles são o alvo preferencial para ataques locais e exploração de falhas lógicas. E aqui, existe um parêntese a ser feito, system apps não são a mesma coisa que user apps, estes, ficam até em locais diferentes dentro do android, sendo syste
+/app ou system/priv-app (system apps) e /data/app (user apps).
+
+**System Apps x User Apps:**
+
+Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmente se restringe aos dados do próprio usuário. Podem ser desinstalados facilmente. Já os system apps são instalados na partição read-only. Frequentemente possuem permissões de nível de sistema que um app comum jamais conseguiria. Não podem ser desinstalados sem acesso root.
+
+
+
 
 
