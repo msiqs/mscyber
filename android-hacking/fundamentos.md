@@ -14,8 +14,9 @@ Antes de atacar um reino, precisamos saber como funcionam as coisas do lado de d
 
 ### System Apps
 
-A camada de System Apps é a ponte entre o usuário e o controle total. Enquanto o Kernel e o HAL são difíceis de explorar remotamente, os System Apps são softwares complexos, cheios de funcionalidades e, estatisticamente, cheios de erros humanos de programação. Eles são o alvo preferencial para ataques locais e exploração de falhas lógicas. E aqui, existe um parêntese a ser feito, system apps não são a mesma coisa que user apps, estes, ficam até em locais diferentes dentro do android, sendo syste
-/app ou system/priv-app (system apps) e /data/app (user apps).
+A camada de System Apps representa a interface direta entre o usuário e o dispositivo, mas para um atacante, ela é a porta de entrada privilegiada. Enquanto a exploração remota de Kernel e HAL exige exploits complexos e específicos de hardware, os System Apps são softwares massivos, propensos a erros de lógica e falhas humanas.
+
+Estatisticamente, é nesta camada que encontramos as vulnerabilidades mais acessíveis. A distinção crucial aqui não é apenas funcional, mas estrutural e de privilégios.
 
 **System Apps x User Apps:**
 
