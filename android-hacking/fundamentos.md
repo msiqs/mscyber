@@ -21,14 +21,9 @@ A camada de System Apps é a ponte entre o usuário e o controle total. Enquanto
 
 Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmente se restringe aos dados do próprio usuário. Podem ser desinstalados facilmente. Já os system apps são instalados na partição read-only. Frequentemente possuem permissões de nível de sistema que um app comum jamais conseguiria. Não podem ser desinstalados sem acesso root. Já os system apps geralmente possuem alto nível de permissão de sistema, coisa que um app comum jamais teria. São exemplo de system app: System UI, Settings, etc... 
 
-{% hint style="info" %}
-O objetivo de atacar um System App é o escalonamento de privilégio. Se você controla um app que tem permissão de "rebootar" o celular ou "ler todos os SMS", você herdou esses superpoderes.
-{% endhint %}
-
 ### Java API Framework
 
-Nesta camada ficam expostas as APIs do sistema. O Java API Framework é a camada de abstração que fornece os blocos de construção para qualquer app Android. Simplificando, um desenvolvedor não escreve código para comunicar diretamente com os drivers de wifi, ou com a tela. Ele chama uma API do framework e o framework traduz isso para as camadas inferiores. 
-
+O Java API Framework é a interface exposta aos desenvolvedores. Para Offensive Security, é o campo de batalha da engenharia reversa dinâmica. É aqui que manipulamos a lógica de funcionamento dos aplicativos através de instrumentação e exploramos falhas lógicas na gestão de permissões e intents.
 
 
 
