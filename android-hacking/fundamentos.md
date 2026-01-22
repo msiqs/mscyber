@@ -20,7 +20,9 @@ Estatisticamente, é nesta camada que encontramos as vulnerabilidades mais acess
 
 **System Apps x User Apps:**
 
-Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmente se restringe aos dados do próprio usuário. Podem ser desinstalados facilmente. Já os system apps são instalados na partição read-only. Frequentemente possuem permissões de nível de sistema que um app comum jamais conseguiria. Não podem ser desinstalados sem acesso root. Já os system apps geralmente possuem alto nível de permissão de sistema, coisa que um app comum jamais teria. São exemplo de system app: System UI, Settings, etc... 
+Os **System Apps** representam a camada privilegiada do ecossistema, residindo em diretórios protegidos como /system/app ou /system/priv-app. Diferente dos softwares comuns, eles são instalados estaticamente junto com a imagem do sistema operacional e habitam uma partição Read-Only, o que significa que não podem ser removidos ou modificados sem acesso Root, oferecendo um vetor excelente para persistência de malware. O valor crítico para a segurança ofensiva, no entanto, reside nos seus privilégios: estes aplicativos frequentemente operam com permissões de nível signature ou system, o que lhes confere é, na maioria dos casos, sinônimo de uma escalação de privilégio bem-sucedida. 
+
+Em contraste, os **User Apps** são os aplicativos instalados dinamicamente pelo usuário e alocados no diretório /data/app. Sob a ótica da arquitetura de segurança, eles operam sob restrições severas: rodam confinados na sandbox padrão do Android, cada um com seu próprio User ID isolado. Isso cria um mecanismo de contenção de danos; se um aplicativo de usuário for explorado, o impacto **geralmente** se restringe ao vazamento de dados daquele contexto específico, sem comprometer a integridade do Kernel ou do sistema operacional. Além disso, não possuem a característica de imutabilidade, podendo ser desinstalados completamente a qualquer momento, o que torna a manutenção de acesso (persistência) muito mais desafiadora para um atacante.
 
 ### Java API Framework
 
