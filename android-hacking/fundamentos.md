@@ -25,6 +25,10 @@ Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmen
 O objetivo de atacar um System App é o escalonamento de privilégio. Se você controla um app que tem permissão de "rebootar" o celular ou "ler todos os SMS", você herdou esses superpoderes.
 {% endhint %}
 
+### Java API Framework
+
+Nesta camada ficam expostas as APIs do sistema. O Java API Framework é a camada de abstração que fornece os blocos de construção para qualquer app Android. Simplificando, um desenvolvedor não escreve código para comunicar diretamente com os drivers de wifi, ou com a tela. Ele chama uma API do framework e o framework traduz isso para as camadas inferiores. 
+
 
 
 
