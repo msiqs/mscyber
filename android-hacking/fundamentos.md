@@ -28,5 +28,12 @@ Em contraste, os **User Apps** são os aplicativos instalados dinamicamente pelo
 
 O Java API Framework é a interface exposta aos desenvolvedores. Para Offensive Security, é o campo de batalha da engenharia reversa dinâmica. É aqui que manipulamos a lógica de funcionamento dos aplicativos através de instrumentação e exploramos falhas lógicas na gestão de permissões e intents.
 
+### Native C/C++ Libraries
+
+Abaixo da camada confortável do Java Framework, reside um conjunto robusto de bibliotecas escritas em C e C++. A existência dessa camada é justificada por uma única palavra: **performance**. O Android delega tarefas pesadas, como renderização gráfica (OpenGL/Vulkan), processamento de áudio, criptografia (SSL) e renderização de páginas web (WebKit), para o código nativo, pois o Java seria lento demais para executá-las em tempo real.
+
+Em segurança ofensiva, esta camada representa o "Velho Oeste". Diferente do Java, que possui um Garbage Collector para gerenciar a memória automaticamente e prevenir erros grosseiros, o C/C++ coloca a responsabilidade do gerenciamento de memória inteiramente nas mãos do desenvolvedor. E, como a história nos ensina, desenvolvedores cometem erros. Um erro aqui não apenas trava o aplicativo; ele abre brechas para sobrescrever a memória do processo, sequestrar o fluxo de execução e obter acesso direto ao sistema, muitas vezes ignorando completamente as proteções da camada superior.
+
+
 
 
