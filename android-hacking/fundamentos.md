@@ -19,7 +19,9 @@ A camada de System Apps é a ponte entre o usuário e o controle total. Enquanto
 
 **System Apps x User Apps:**
 
-Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmente se restringe aos dados do próprio usuário. Podem ser desinstalados facilmente. Já os system apps são instalados na partição read-only. Frequentemente possuem permissões de nível de sistema que um app comum jamais conseguiria. Não podem ser desinstalados sem acesso root.
+Os user apps rodam com privilégios limitados. Se comprometidos, o dano geralmente se restringe aos dados do próprio usuário. Podem ser desinstalados facilmente. Já os system apps são instalados na partição read-only. Frequentemente possuem permissões de nível de sistema que um app comum jamais conseguiria. Não podem ser desinstalados sem acesso root. Já os system apps geralmente possuem alto nível de permissão de sistema, coisa que um app comum jamais teria. São exemplo de system app: System UI, Settings, etc... 
+
+> O objetivo de atacar um System App é o escalonamento de privilégio. Se você controla um app que tem permissão de "rebootar" o celular ou "ler todos os SMS", você herdou esses superpoderes.
 
 
 
