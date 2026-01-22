@@ -1,6 +1,3 @@
-ã õ à À
-
-
 Mobile hacking vem crescendo cada vez mais no que concerne estudos especializados, demanda e interesse por parte dos profissionais e entusiastas de cyber. Pela abordagem inicial ser diferente de um web ou infra, algumas pessoas constroem sob si mesmas barreiras que às impedem de se aprofundar nessa "nova tendência". Frases como "se é louco, mobile não é pra mim não..." são comunmente ditas por integrantes da comunidade. Dessa forma, esse artigo tem como objetivo desmistificar o mobile hacking.
 
 # O Android.
@@ -33,6 +30,9 @@ O Java API Framework é a interface exposta aos desenvolvedores. Para Offensive 
 Abaixo da camada confortável do Java Framework, reside um conjunto robusto de bibliotecas escritas em C e C++. A existência dessa camada é justificada por uma única palavra: **performance**. O Android delega tarefas pesadas, como renderização gráfica (OpenGL/Vulkan), processamento de áudio, criptografia (SSL) e renderização de páginas web (WebKit), para o código nativo, pois o Java seria lento demais para executá-las em tempo real.
 
 Em segurança ofensiva, esta camada representa o "Velho Oeste". Diferente do Java, que possui um Garbage Collector para gerenciar a memória automaticamente e prevenir erros grosseiros, o C/C++ coloca a responsabilidade do gerenciamento de memória inteiramente nas mãos do desenvolvedor. E, como a história nos ensina, desenvolvedores cometem erros. Um erro aqui não apenas trava o aplicativo; ele abre brechas para sobrescrever a memória do processo, sequestrar o fluxo de execução e obter acesso direto ao sistema, muitas vezes ignorando completamente as proteções da camada superior.
+
+ã õ à À
+
 
 
 
