@@ -1,4 +1,4 @@
-# 🚩 MSCyber - Offensive Security Research
+# MSCyber - Offensive Security Research
 
 Bem-vindo ao meu repositório central de pesquisa e desenvolvimento em Segurança Ofensiva.
 
