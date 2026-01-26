@@ -1,6 +1,6 @@
 Mobile hacking vem crescendo cada vez mais no que concerne estudos especializados, demanda e interesse por parte dos profissionais e entusiastas de cyber. Pela abordagem inicial ser diferente de um web ou infra, algumas pessoas constroem sob si mesmas barreiras que às impedem de se aprofundar nessa "nova tendência". Frases como "se é louco, mobile não é pra mim não..." são comunmente ditas por integrantes da comunidade. Dessa forma, esse artigo tem como objetivo desmistificar o mobile hacking.
 
-# O Android: Um Linux Paranoico
+# O Android:
 
 Para atacar o Android com eficiência, a primeira chave mental que você precisa virar é entender que ele é, em sua essência, um **Linux Paranoico**.
 
@@ -12,7 +12,7 @@ Antes de sitiar um reino, precisamos mapear o que acontece dentro das muralhas. 
 
 ![Figura 1 - Ilustração da arquitetura](image.png)
 
-### 1. System Apps: O Elo Privilegiado
+### 1. System Apps:
 
 A camada de System Apps é a interface direta com o usuário, mas para nós, é um vetor de ataque de alto valor. Enquanto a exploração de Kernel exige exploits instáveis e dependentes de hardware, os System Apps são softwares massivos, escritos por humanos e, portanto, repletos de falhas lógicas.
 
@@ -21,13 +21,13 @@ A distinção crítica aqui é estrutural e hierárquica:
 * **System Apps:** Habitam diretórios protegidos `/system/app` ou `/system/priv-app` e são *Read-Only* sem acesso root. O "ouro" aqui são as permissões. Estes apps frequentemente rodam com permissões de nível `signature` ou `system`. Comprometer um app desta camada é, muitas vezes, sinônimo de obter controle quase total sobre o dispositivo sem precisar tocar no Kernel. Eles são a porta de entrada para persistência de malware avançado.
 * **User Apps:** São os aplicativos instalados pelo usuário em `/data/app`. Eles vivem sob restrições severas: rodam confinados na sandbox padrão, isolados pelo seu UID. Se você explora um User App, o dano geralmente se restringe ao vazamento de dados daquele contexto. A persistência aqui é frágil, pois o usuário pode remover o app a qualquer momento.
 
-### 2. Java API Framework: O Campo de Batalha da Lógica
+### 2. Java API Framework:
 
 O Java API Framework é a camada de abstração que expõe as funcionalidades do hardware para os apps. Para Offensive Security, este é o palco da **Engenharia Reversa Dinâmica**.
 
 É aqui que manipulamos a lógica de negócios. Ferramentas como **Frida** brilham nesta camada, permitindo hookar chamadas de métodos em tempo de execução. As vulnerabilidades aqui geralmente não são de corrupção de memória, mas de **Lógica e IPC (Inter-Process Communication)**: Intents mal configurados, Broadcast Receivers exportados indevidamente e Content Providers vazando dados sensíveis. É onde o atacante faz o aplicativo agir contra si mesmo.
 
-### 3. Native C/C++ Libraries: O Velho Oeste da Memória
+### 3. Native C/C++ Libraries:
 
 Abaixo do conforto gerenciado do Java, reside o "submundo" das bibliotecas nativas (C/C++). O Android delega tarefas críticas de performance, renderização gráfica (Surface Manager), áudio, SSL e WebKit, para código nativo.
 
@@ -35,7 +35,7 @@ Em segurança ofensiva, esta camada representa o caos e a oportunidade. Diferent
 
 Aqui, não procuramos erros de lógica simples, mas falhas de **Memory Corruption** (Buffer Overflows, Use-After-Free, Integer Overflows). Um exploit bem-sucedido nesta camada é devastador: ele permite sequestrar o fluxo de execução do processo, pular a sandbox do Java e, frequentemente, obter uma shell com os privilégios do processo nativo, contornando proteções de alto nível.
 
-### 4. Android Runtime (ART): O Motor da Execução
+### 4. Android Runtime (ART):
 
 Se as camadas anteriores são as engrenagens, o **Android Runtime (ART)** é o motor que faz tudo girar. É aqui que o código do aplicativo (bytecode DEX) é traduzido para instruções de máquina que a CPU entende.
 
