@@ -2,7 +2,7 @@
 
 Bem-vindo ao meu repositório central de pesquisa e desenvolvimento em Segurança Ofensiva.
 
-Este espaço foi criado com o objetivo de documentar minha jornada técnica, compartilhar *Write-ups* e centralizar a documentação das ferramentas que desenvolvo.
+Este espaço foi criado com o objetivo de documentar minha jornada técnica, compartilhar Write-ups e centralizar a documentação das ferramentas que desenvolvo.
 
 ---
 
