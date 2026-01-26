@@ -8,7 +8,7 @@
 * [Componentes do Android](android-hacking/componentes.md)
 
 ## Projetos
-* [Crypto-Breaker](projetos/cryptobreaker.md)
+* [Crypto Breaker](projetos/cryptobreaker.md)
 
 ## Certificações
 * [CMPen - Android](certs/cmpen.md)
