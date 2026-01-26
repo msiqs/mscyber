@@ -54,3 +54,46 @@ Antigamente (Android 4.4 e anteriores), usava-se a **Dalvik**, que compilava o c
 3.  **Dex e Odex:** O atacante precisa lidar com arquivos `.dex` (Dalvik Executable). O ART pega esses arquivos e os otimiza. Muitas vezes, malwares tentam esconder seu código malicioso carregando arquivos `.dex` dinamicamente em tempo de execução para evitar a análise estática. Entender como o ART processa e carrega esses arquivos permite que você intercepte o código desempacotado na memória antes que ele seja executado.
 
 Em resumo: O ART é onde a mágica e a manipulação acontece. Quem domina o runtime, domina a execução.
+
+### Hardware Abstraction Layer (HAL)
+
+Se o Framework é o cérebro, a **HAL (Hardware Abstraction Layer)** é o sistema nervoso periférico. Ela serve como uma ponte de tradução entre o software de alto nível (Java API) e o hardware físico real do dispositivo.
+
+Para um hacker, a HAL é interessante porque é aqui que o código genérico do Google encontra o código proprietário dos fabricantes (Samsung, Xiaomi, Motorola, etc.). O Android define uma interface padrão (HIDL ou AIDL), e os fabricantes são obrigados a implementar essa interface para que a câmera, o bluetooth ou o sensor de biometria funcionem.
+
+**O Vetor de Ataque:**
+
+A vulnerabilidade aqui reside na **implementação do fabricante**. Enquanto o código base do Android é auditado por milhares de olhos, os drivers proprietários da HAL muitas vezes são desenvolvidos às pressas para lançar um novo modelo de celular.
+
+* **Privilégios Isolados:** Processos da HAL rodam com privilégios específicos de hardware. Se você comprometer a HAL da Câmera, você não ganha root imediatamente, mas ganha controle total e silencioso sobre o fluxo de vídeo e fotos, muitas vezes ignorando os indicadores de privacidade do sistema.
+* **Drivers de Terceiros:** Muitas CVEs em Android surgem em componentes da HAL de fornecedores de chips, como drivers da GPU Adreno ou Mali, permitindo escalação de privilégio local (LPE) a partir de um aplicativo comum.
+
+### Linux Kernel
+
+Esse é o alicerce de tudo. O **Linux Kernel** é a camada mais baixa de software, interagindo diretamente com o hardware. Mas, embora seja baseado no Linux que usamos em servidores, o Kernel do Android é altamente modificado.
+
+Na perspectiva de *Offensive Security*, esta é a "Terra Prometida". Comprometer o Kernel significa **Game Over** para as defesas do dispositivo.
+
+1.  **O Poder Absoluto (Root):**
+    Exploits de Kernel não buscam apenas vazamento de dados, buscam **Escalação de Privilégio para Root**. Uma vez que você tem execução de código no nível do Kernel, as sandboxes dos aplicativos deixam de existir. Você pode ler a memória de qualquer app, interceptar tráfego criptografado, persistir malware de forma invisível e até mesmo desativar a polícia de segurança do Android.
+
+2.  **Binder (IPC) - O Coração do Android:**
+    Destaque especial para o **Driver Binder**. Diferente do Linux Desktop que usa pipes ou sockets padrão, o Android usa o Binder para quase toda a comunicação entre processos (IPC).
+    * *Visão do Atacante:* O Binder é o "carteiro" do sistema. Se você encontrar uma falha no driver do Binder, você pode interceptar, modificar ou falsificar mensagens entre componentes do sistema. É um dos alvos mais sofisticados e valiosos para pesquisa de vulnerabilidades.
+
+3.  **Drivers: O Calcanhar de Aquiles:**
+    O Kernel principal é relativamente seguro e bem testado. O problema são os **Drivers de Dispositivo** (Wi-Fi, Bluetooth, Áudio, USB, Câmera) adicionados pelos fabricantes. Estatisticamente, a maioria dos *Kernel Panics* e vulnerabilidades *Zero-Day* que permitem root surgem de drivers mal escritos que não validam corretamente os inputs vindos do espaço do usuário (ioctl calls). Atacar o Kernel do Android quase sempre significa atacar um driver específico e cheio de bugs.
+
+---
+
+### Resumo para o Leitor
+
+Ao olhar para essa arquitetura, o hacker não vê "camadas de abstração". Ele vê um mapa de oportunidades:
+
+* Quer dados do usuário? Ataque os **User Apps**.
+* Quer interceptar funções do sistema? Ataque o **Java Framework**.
+* Quer bypassar proteções e ganhar velocidade? Ataque as **Native Libraries**.
+* Quer controle de hardware específico? Ataque a **HAL**.
+* Quer controle total e invisibilidade? Ataque o **Kernel**.
+
+Entender onde você está pisando é o primeiro passo para saber como quebrar o chão.
