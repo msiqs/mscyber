@@ -18,7 +18,7 @@ A camada de System Apps é a interface direta com o usuário, mas para nós, é 
 
 A distinção crítica aqui é estrutural e hierárquica:
 
-* **System Apps:** Habitam diretórios protegidos (`/system/app` ou `/system/priv-app`) e são *Read-Only* sem acesso root. O "ouro" aqui são as permissões. Estes apps frequentemente rodam com permissões de nível `signature` ou `system`. Comprometer um app desta camada é, muitas vezes, sinônimo de obter controle quase total sobre o dispositivo sem precisar tocar no Kernel. Eles são a porta de entrada para persistência de malware avançado.
+* **System Apps:** Habitam diretórios protegidos `/system/app` ou `/system/priv-app` e são *Read-Only* sem acesso root. O "ouro" aqui são as permissões. Estes apps frequentemente rodam com permissões de nível `signature` ou `system`. Comprometer um app desta camada é, muitas vezes, sinônimo de obter controle quase total sobre o dispositivo sem precisar tocar no Kernel. Eles são a porta de entrada para persistência de malware avançado.
 * **User Apps:** São os aplicativos instalados pelo usuário em `/data/app`. Eles vivem sob restrições severas: rodam confinados na sandbox padrão, isolados pelo seu UID. Se você explora um User App, o dano geralmente se restringe ao vazamento de dados daquele contexto. A persistência aqui é frágil, pois o usuário pode remover o app a qualquer momento.
 
 ### 2. Java API Framework: O Campo de Batalha da Lógica
@@ -42,7 +42,7 @@ Se as camadas anteriores são as engrenagens, o **Android Runtime (ART)** é o m
 Para um hacker mobile, entender o ART (e seu antecessor, o Dalvik) é obrigatório, pois é neste nível que a instrumentação ocorre.
 
 **A Evolução: De Dalvik para ART**
-Antigamente (Android 4.4 e anteriores), usava-se a **Dalvik**, que compilava o código "Just-In-Time" (JIT), ou seja, compilava trechos do app toda vez que ele era rodado. Isso era lento. O Android moderno usa o **ART (Android Runtime)**, que introduziu a compilação AOT (*Ahead-of-Time*). O app é compilado para código de máquina nativo (`.oat` / `.elf`) no momento da instalação.
+Antigamente (Android 4.4 e anteriores), usava-se a **Dalvik**, que compilava o código "Just-In-Time" (JIT), ou seja, compilava trechos do app toda vez que ele era rodado. Isso era lento. O Android moderno usa o **ART (Android Runtime)**, que introduziu a compilação AOT (*Ahead-of-Time*). O app é compilado para código de máquina nativo `.oat` / `.elf` no momento da instalação.
 
 **Por que o ART é crítico para o Hacking?**
 
