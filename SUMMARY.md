@@ -3,7 +3,7 @@
 * [Início](README.md)
 
 ## Desmistificando Android Hacking
-* [arquitetura-android](android-hacking/fundamentos.md)
+* [Arquitetura Android](android-hacking/fundamentos.md)
 
 ## Projetos
 * [Recon Auto](projetos/reconauto.md)
