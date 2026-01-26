@@ -33,5 +33,5 @@ Sou um profissional focado em **Offensive Security** e **Desenvolvimento Seguro*
 ---
 
 ### Conecte-se comigo
-* **LinkedIn:** ([linkedin.com/matheus-siqueira](https://www.linkedin.com/in/matheus-siqueira-961a522b1/))
+* **LinkedIn:** [linkedin.com/matheus-siqueira](https://www.linkedin.com/in/matheus-siqueira-961a522b1/)
 * **GitHub:** [github.com/msiqs](https://github.com/msiqs)
