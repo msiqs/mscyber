@@ -74,14 +74,14 @@ Esse é o alicerce de tudo. O **Linux Kernel** é a camada mais baixa de softwar
 
 Na perspectiva de *Offensive Security*, esta é a "Terra Prometida". Comprometer o Kernel significa **Game Over** para as defesas do dispositivo.
 
-1.  **O Poder Absoluto (Root):**
+1.  **Root:**
     Exploits de Kernel não buscam apenas vazamento de dados, buscam **Escalação de Privilégio para Root**. Uma vez que você tem execução de código no nível do Kernel, as sandboxes dos aplicativos deixam de existir. Você pode ler a memória de qualquer app, interceptar tráfego criptografado, persistir malware de forma invisível e até mesmo desativar a polícia de segurança do Android.
 
-2.  **Binder (IPC) - O Coração do Android:**
+2.  **Binder (IPC):**
     Destaque especial para o **Driver Binder**. Diferente do Linux Desktop que usa pipes ou sockets padrão, o Android usa o Binder para quase toda a comunicação entre processos (IPC).
     * *Visão do Atacante:* O Binder é o "carteiro" do sistema. Se você encontrar uma falha no driver do Binder, você pode interceptar, modificar ou falsificar mensagens entre componentes do sistema. É um dos alvos mais sofisticados e valiosos para pesquisa de vulnerabilidades.
 
-3.  **Drivers: O Calcanhar de Aquiles:**
+3.  **Drivers:**
     O Kernel principal é relativamente seguro e bem testado. O problema são os **Drivers de Dispositivo** (Wi-Fi, Bluetooth, Áudio, USB, Câmera) adicionados pelos fabricantes. Estatisticamente, a maioria dos *Kernel Panics* e vulnerabilidades *Zero-Day* que permitem root surgem de drivers mal escritos que não validam corretamente os inputs vindos do espaço do usuário (ioctl calls). Atacar o Kernel do Android quase sempre significa atacar um driver específico e cheio de bugs.
 
 ---
