@@ -49,6 +49,8 @@ O Crypto-Breaker utiliza uma interface CLI moderna. Abaixo, um exemplo de ataque
 ```bash
 python3 main.py aes -f secret_data.enc -w rockyou.txt -m CBC --iv "BASE64_IV"
 ```
+
+Saída do terminal:
 ```Plaintext
 [+] Target Loaded: secret_data.enc
 [+] Mode: AES-CBC | Workers: 12
