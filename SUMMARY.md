@@ -5,6 +5,7 @@
 ## Desmistificando Android Hacking
 * [Arquitetura Android](android-hacking/fundamentos.md)
 * [Modelo de Segurança do Android](android-hacking/modelo-de-segurança.md)
+* [Componentes do Android](android-hacking/componentes.md)
 
 ## Projetos
 * [Recon Auto](projetos/reconauto.md)
