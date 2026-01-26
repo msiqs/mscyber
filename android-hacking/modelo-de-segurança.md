@@ -28,3 +28,15 @@ No Android, todo APK deve ser assinado digitalmente com um certificado do desenv
 
 * **A Regra:** O Android não permite instalar uma atualização de um app se a assinatura digital não bater com a da versão já instalada.
 * **O Obstáculo para o Hacker:** Quando fazemos engenharia reversa de um APK para injetar um malware ou modificar uma função, nós quebramos a assinatura original. Para reinstalar o app modificado no dispositivo, somos obrigados a reassiná-lo com nossa própria chave. Isso cria um problema: o app modificado perde o acesso aos dados do app original, devido à mudança de assinatura, e pode ser bloqueado por mecanismos de proteção do Google Play Protect.
+
+## 4. SELinux: O Guarda-Costas (Mandatory Access Control)
+
+Lembra que falamos sobre UIDs e Sandbox? Isso é o que chamamos de **DAC** (*Discretionary Access Control*). Mas o Android não confia apenas nisso. Ele implementa uma camada extra e brutal chamada **SELinux** (*Security-Enhanced Linux*).
+
+* **A Regra:** O SELinux funciona no modo **MAC** (*Mandatory Access Control*). Ele ignora quem você é, mesmo que seja Root, e foca no que você está tentando fazer. Existe uma política central no Kernel que diz: "O processo da Câmera *pode* falar com o driver de vídeo, mas *não pode* ler o arquivo de contatos".
+* **O Pesadelo do Hacker:** Imagine que você conseguiu um exploit que te dá acesso Root (UID 0). No Linux comum, você seria Deus. No Android com SELinux em modo *Enforcing*, mesmo sendo Root, se você tentar acessar um arquivo que a política não permite, o Kernel bloqueia a ação.
+* **Visão do Atacante:** Grande parte do trabalho de um desenvolvedor de exploits modernos para Android não é apenas ganhar Root, mas sim fazer um "bypass" ou desativar o SELinux (mudando para o modo *Permissive*), para que o Root possa realmente ter poderes ilimitados.
+
+> **Alvos Fáceis: Flags de Depuração**
+>
+> Às vezes, o desenvolvedor esquece a porta dos fundos aberta. Se o atributo `android:debuggable="true"` estiver presente no `AndroidManifest.xml`, o modelo de segurança colapsa. Isso permite que um atacante conecte um depurador ao processo do app, execute código arbitrário e leia a memória em tempo real, sem precisar de Root ou exploits complexos.
