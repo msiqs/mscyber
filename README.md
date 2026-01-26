@@ -10,7 +10,7 @@ Este espaço foi criado com o objetivo de documentar minha jornada técnica, com
 
 O conteúdo está dividido em trilhas de conhecimento e projetos práticos:
 
-### 📱 Desmistificando Android Hacking
+### Desmistificando Android Hacking
 Uma série técnica profunda sobre a arquitetura e segurança do sistema operacional móvel mais usado do mundo.
 * **Foco:** Engenharia Reversa, Análise Dinâmica Frida, Exploração de Componentes e Bypass de proteções.
 * **Status:** Em desenvolvimento ativo.
