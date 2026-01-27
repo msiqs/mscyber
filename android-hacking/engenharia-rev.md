@@ -24,7 +24,7 @@ Ele nos dá uma interface gráfica (JADX-GUI) similar a uma IDE, como o VS Code 
 
 ## 3. O Que Estamos Caçando? (Static Analysis Checklist)
 
-Ao abrir um APK no JADX, não vamos ler 100.000 linhas de código linha por linha. Nós fazemos buscas por classes, arquivos, palavras-chave muito específicas que geralmente nos dão um norte ou entregam por si só uma vulnerabilidade logo de cara.
+Ao abrir um APK no JADX, não vamos ler 100.000 linhas de código linha por linha. Nós fazemos buscas por classes, arquivos, strings muito específicas que geralmente nos dão um norte ou entregam por si só uma vulnerabilidade logo de cara.
 
 ### A. O Manifesto (`AndroidManifest.xml`)
 A primeira parada obrigatória. O JADX reconstrói o XML binário para texto.
