@@ -9,6 +9,7 @@
 * [ADB](android-hacking/adb.md)
 * [Engenharia Reversa](android-hacking/engenharia-rev.md)
 * [Análise Dinâmica](android-hacking/analise-dinamica.md)
+* [API](android-hacking/api.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
