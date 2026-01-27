@@ -43,6 +43,7 @@ public boolean isRooted() {
 Em vez de tentar recompilar o APK (o que quebraria a assinatura), criamos um script Frida para reescrever a lógica na memória RAM:
 
 ```javascript
+// Código Frida exemplo
 Java.perform(function() {
     var SecurityClass = Java.use("com.app.alvo.SecurityCheck");
 
