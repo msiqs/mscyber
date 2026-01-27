@@ -68,7 +68,7 @@ A vulnerabilidade aqui reside na **implementação do fabricante**. Enquanto o c
 * **Privilégios Isolados:** Processos da HAL rodam com privilégios específicos de hardware. Se você comprometer a HAL da Câmera, você não ganha root imediatamente, mas ganha controle total e silencioso sobre o fluxo de vídeo e fotos, muitas vezes ignorando os indicadores de privacidade do sistema.
 * **Drivers de Terceiros:** Muitas CVEs em Android surgem em componentes da HAL de fornecedores de chips, como drivers da GPU Adreno ou Mali, permitindo escalação de privilégio local (LPE) a partir de um aplicativo comum.
 
-## Linux Kernel
+## 6. Linux Kernel
 
 Esse é o alicerce de tudo. O **Linux Kernel** é a camada mais baixa de software, interagindo diretamente com o hardware. Mas, embora seja baseado no Linux que usamos em servidores, o Kernel do Android é altamente modificado.
 
