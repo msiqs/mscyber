@@ -12,7 +12,7 @@ Antes de sitiar um reino, precisamos mapear o que acontece dentro das muralhas. 
 
 ![Figura 1 - Ilustração da arquitetura](image.png)
 
-### 1. System Apps
+## 1. System Apps
 
 A camada de System Apps é a interface direta com o usuário, mas para nós, é um vetor de ataque de alto valor. Enquanto a exploração de Kernel exige exploits instáveis e dependentes de hardware, os System Apps são softwares massivos, escritos por humanos e, portanto, repletos de falhas lógicas.
 
@@ -21,13 +21,13 @@ A distinção crítica aqui é estrutural e hierárquica:
 * **System Apps:** Habitam diretórios protegidos `/system/app` ou `/system/priv-app` e são *Read-Only* sem acesso root. O "ouro" aqui são as permissões. Estes apps frequentemente rodam com permissões de nível `signature` ou `system`. Comprometer um app desta camada é, muitas vezes, sinônimo de obter controle quase total sobre o dispositivo sem precisar tocar no Kernel. Eles são a porta de entrada para persistência de malware avançado.
 * **User Apps:** São os aplicativos instalados pelo usuário em `/data/app`. Eles vivem sob restrições severas: rodam confinados na sandbox padrão, isolados pelo seu UID. Se você explora um User App, o dano geralmente se restringe ao vazamento de dados daquele contexto. A persistência aqui é frágil, pois o usuário pode remover o app a qualquer momento.
 
-### 2. Java API Framework
+## 2. Java API Framework
 
 O Java API Framework é a camada de abstração que expõe as funcionalidades do hardware para os apps. Para Offensive Security, este é o palco da **Engenharia Reversa Dinâmica**.
 
 É aqui que manipulamos a lógica de negócios. Ferramentas como **Frida** brilham nesta camada, permitindo hookar chamadas de métodos em tempo de execução. As vulnerabilidades aqui geralmente não são de corrupção de memória, mas de **Lógica e IPC (Inter-Process Communication)**: Intents mal configurados, Broadcast Receivers exportados indevidamente e Content Providers vazando dados sensíveis. É onde o atacante faz o aplicativo agir contra si mesmo.
 
-### 3. Native C/C++ Libraries
+## 3. Native C/C++ Libraries
 
 Abaixo do conforto gerenciado do Java, reside o "submundo" das bibliotecas nativas (C/C++). O Android delega tarefas críticas de performance, renderização gráfica (Surface Manager), áudio, SSL e WebKit, para código nativo.
 
@@ -35,7 +35,7 @@ Em segurança ofensiva, esta camada representa o caos e a oportunidade. Diferent
 
 Aqui, não procuramos erros de lógica simples, mas falhas de **Memory Corruption** (Buffer Overflows, Use-After-Free, Integer Overflows). Um exploit bem-sucedido nesta camada é devastador: ele permite sequestrar o fluxo de execução do processo, pular a sandbox do Java e, frequentemente, obter uma shell com os privilégios do processo nativo, contornando proteções de alto nível.
 
-### 4. Android Runtime (ART)
+## 4. Android Runtime (ART)
 
 Se as camadas anteriores são as engrenagens, o **Android Runtime (ART)** é o motor que faz tudo girar. É aqui que o código do aplicativo (bytecode DEX) é traduzido para instruções de máquina que a CPU entende.
 
@@ -55,7 +55,7 @@ Antigamente (Android 4.4 e anteriores), usava-se a **Dalvik**, que compilava o c
 
 Em resumo: O ART é onde a mágica e a manipulação acontece. Quem domina o runtime, domina a execução.
 
-### 5. Hardware Abstraction Layer (HAL)
+## 5. Hardware Abstraction Layer (HAL)
 
 Se o Framework é o cérebro, a **HAL (Hardware Abstraction Layer)** é o sistema nervoso periférico. Ela serve como uma ponte de tradução entre o software de alto nível (Java API) e o hardware físico real do dispositivo.
 
@@ -68,7 +68,7 @@ A vulnerabilidade aqui reside na **implementação do fabricante**. Enquanto o c
 * **Privilégios Isolados:** Processos da HAL rodam com privilégios específicos de hardware. Se você comprometer a HAL da Câmera, você não ganha root imediatamente, mas ganha controle total e silencioso sobre o fluxo de vídeo e fotos, muitas vezes ignorando os indicadores de privacidade do sistema.
 * **Drivers de Terceiros:** Muitas CVEs em Android surgem em componentes da HAL de fornecedores de chips, como drivers da GPU Adreno ou Mali, permitindo escalação de privilégio local (LPE) a partir de um aplicativo comum.
 
-### Linux Kernel
+## Linux Kernel
 
 Esse é o alicerce de tudo. O **Linux Kernel** é a camada mais baixa de software, interagindo diretamente com o hardware. Mas, embora seja baseado no Linux que usamos em servidores, o Kernel do Android é altamente modificado.
 
@@ -86,7 +86,7 @@ Na perspectiva de *Offensive Security*, esta é a "Terra Prometida". Comprometer
 
 ---
 
-### Resumo para o Leitor
+## Resumo para o Leitor
 
 Ao olhar para essa arquitetura, o hacker não vê "camadas de abstração". Ele vê um mapa de oportunidades:
 
