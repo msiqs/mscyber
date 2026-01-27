@@ -5,7 +5,7 @@ O Android não confia em ninguém. Entender as defesas nativas é vital, pois 90
 ## 1. Application Sandbox & UIDs
 
 O Android isola apps usando UIDs do Linux. O App A (UID 10001) não pode ler arquivos do App B (UID 10002).
-* **Ataque:** Nossa meta é conseguir RCE dentro do contexto do app alvo para herdar o UID dele e ler seus dados privados `/data/data/com.alvo/`.
+* **Ataque:** A meta do atacante aqui é conseguir RCE dentro do contexto do app alvo para herdar o UID dele e ler seus dados privados `/data/data/com.alvo/`.
 
 ## 2. Permissões e Scoped Storage
 
@@ -29,7 +29,7 @@ Todo APK deve ser assinado. O Android usa esquemas de assinatura evolutivos:
 O **SELinux** (Security-Enhanced Linux) atua em modo **MAC** (Mandatory Access Control). Ele bloqueia ações baseadas em *políticas*, não apenas em quem você é.
 
 * **Cenário Real:** Mesmo se você ganhar Root, o SELinux pode impedir que seu shell reverso acesse a câmera ou injete código em outro processo.
-* **Bypass:** Em ambientes de teste, usamos `setenforce 0` para colocar o SELinux em modo Permissivo. Em exploits reais, precisamos encontrar falhas no kernel para desativar essa política em tempo de execução.
+* **Bypass:** Em ambientes de teste, usa-se `setenforce 0` para colocar o SELinux em modo Permissivo. Em exploits reais, precisamos encontrar falhas no kernel para desativar essa política em tempo de execução.
 
 > **Hint: Flags de Depuração**
 > Verifique sempre o `AndroidManifest.xml`. Se `android:debuggable="true"`, o jogo acabou. Você pode conectar o JDWP (Java Debug Wire Protocol) e ter uma shell dentro do app sem precisar de nenhum exploit.
