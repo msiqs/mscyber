@@ -42,13 +42,13 @@ Mesmo com o certificado no sistema, muitos apps implementam uma defesa extra cha
 
 O App diz: *"Eu não confio apenas no Sistema. Eu tenho o desenho exato do certificado do meu servidor guardado no meu código. Se o certificado que eu receber for diferente, mesmo que o sistema diga que é confiável, eu corto a conexão."*
 
-## Flutter e Xamarin: Os "Rebeldes"
+### Flutter e Xamarin: Os "Rebeldes"
 
 Apps desenvolvidos em frameworks cross-platform (Flutter, Xamarin/Maui) **NÃO** usam o proxy do sistema Android e **NÃO** respeitam a TrustStore do Android.
 * **O Problema:** Mesmo com o certificado no Sistema e Proxy configurado no Wi-Fi, o app Flutter ignora tudo e conecta direto.
 * **A Solução:** Você precisa de scripts Frida específicos para Flutter, hookando a biblioteca `libflutter.so`, para desabilitar a verificação de certificado internamente na engine do framework (BoringSSL). O Burp sozinho não funciona aqui.
 
-## Network Security Config
+### Network Security Config
 
 Antes de começar, verifique o arquivo `res/xml/network_security_config.xml` (se existir).
 * **CleartextTraffic:** Se `<domain-config cleartextTrafficPermitted="true">` estiver presente, o app aceita HTTP. Isso facilita muito a vida.
