@@ -26,7 +26,7 @@ Minha análise crítica e roadmap de estudos sobre as principais certificações
 
 ## Sobre o Autor
 
-Sou um profissional focado em **Offensive Security** e **Desenvolvimento Seguro**. Minha abordagem combina uma base sólida em Engenharia de Software com a mentalidade criativa do Hacking Ético. Acredito que para quebrar um sistema com eficiência, é preciso primeiro entender profundamente como ele foi construído.
+Sou um profissional focado em **Offensive Security** e **Desenvolvimento Seguro**. Minha abordagem combina uma base sólida em Engenharia de Software com a mentalidade criativa do Ethical Hacking. Acredito que para encontrar vulnerabilidades em um sistema com eficiência, é preciso primeiro entender profundamente como ele foi construído.
 
 > *"Security is not a product, but a process."* - Bruce Schneier
 
