@@ -17,7 +17,7 @@ Uma série técnica profunda sobre a arquitetura e segurança do sistema operaci
 
 ### Projetos & Tooling
 Documentação oficial de ferramentas desenvolvidas para resolver problemas reais em engagements de Red Team.
-* **[Crypto-Breaker](projetos/crypto-breaker):** Um framework modular de criptoanálise focado em ataques lógicos e recursividade, desenhado para superar as limitações de ferramentas de força bruta tradicionais.
+* **[Crypto-Breaker](https://github.com/msiqs/crypto-breaker):** Um framework modular de criptoanálise focado em ataques lógicos e recursividade, desenhado para superar as limitações de ferramentas de força bruta tradicionais.
 
 ### Certificações & Reviews
 Minha análise crítica e roadmap de estudos sobre as principais certificações do mercado, servindo como guia para outros profissionais.
