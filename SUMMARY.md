@@ -8,6 +8,7 @@
 * [Componentes do Android](android-hacking/componentes.md)
 * [ADB](android-hacking/adb.md)
 * [Engenharia Reversa](android-hacking/engenharia-rev.md)
+* [Análise Dinâmico](android-hacking/analise-dinamica.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)

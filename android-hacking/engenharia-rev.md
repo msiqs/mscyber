@@ -54,4 +54,4 @@ Nós precisaremos editar o **Smali**.
 * **Smali** é a representação legível do bytecode DEX.
 * Enquanto o Java é alto nível (`if (senha == "123")`), o Smali é baixo nível e trabalha com registradores (`if-eq v0, v1, :cond_0`).
 
-> **Nota do Atacante:** Análise Estática é leitura. Para escrita e modificação, usaremos outra ferramenta chamada `Apktool` no futuro. Por enquanto, foque em entender o código que você vê.
+> **Nota do Atacante:** Análise Estática é leitura. Para escrita e modificação, você usará outra ferramenta chamada `Apktool` no futuro. Por enquanto, foque em entender o código que você vê.
