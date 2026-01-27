@@ -1,42 +1,35 @@
 # As Regras do Jogo: O Modelo de Segurança
 
-Agora que conhecemos a arquitetura, precisamos entender as defesas. O Android não foi desenhado para ser amigável com quem quer fuçar suas entranhas. Ele foi desenhado para manter cada aplicativo em uma cela solitária.
+O Android não confia em ninguém. Entender as defesas nativas é vital, pois 90% do trabalho de um exploit moderno é fazer o bypass dessas mitigações.
 
-Para um atacante, entender essas regras é vital, pois a maioria dos "hacks" em mobile não envolve apenas explorar um bug, mas sim encadear falhas para escapar dessas restrições.
+## 1. Application Sandbox & UIDs
 
-## 1. Application Sandbox:
+O Android isola apps usando UIDs do Linux. O App A (UID 10001) não pode ler arquivos do App B (UID 10002).
+* **Ataque:** Nossa meta é conseguir RCE dentro do contexto do app alvo para herdar o UID dele e ler seus dados privados `/data/data/com.alvo/`.
 
-Lembra que chamei o Android de "Linux Paranoico"? A Sandbox é a manifestação física dessa paranoia.
+## 2. Permissões e Scoped Storage
 
-No Linux tradicional, se eu rodo dois programas com o usuário `matheus`, ambos têm os mesmos privilégios e podem acessar os arquivos um do outro. No Android, isso não existe.
-O sistema atribui um **User ID único** para cada aplicativo no momento da instalação.
+Antigamente, a permissão `READ_EXTERNAL_STORAGE` dava acesso total ao cartão SD.
+A partir do **Android 10+**, o Google introduziu o **Scoped Storage**.
 
-* **A Barreira:** O App do Banco (UID 1001) não consegue ler os arquivos do App de Notas (UID 1002), porque, para o Kernel, eles são usuários completamente diferentes.
-* **A Visão do Atacante:** Nossa meta inicial em qualquer pentest é, frequentemente, conseguir execução de código dentro do contexto do aplicativo alvo. Só estando "dentro" da Sandbox dele é que podemos roubar seus segredos (bancos de dados SQLite, SharedPreferences, Tokens). De fora, a Sandbox nos bloqueia, a menos que tenhamos Root.
+* **A Regra:** Mesmo com permissão de leitura, um app só vê seus próprios arquivos e arquivos de mídia públicos. Ele **não consegue** mais ler a pasta de downloads ou arquivos de outros apps soltos no armazenamento.
+* **Impacto no Hacking:** Roubar arquivos via Path Traversal ou Directory Listing ficou muito mais difícil. Agora focamos em explorar FileProviders mal configurados para contornar isso.
 
-## 2. O Modelo de Permissões:
+## 3. Code Signing & Repackaging
 
-Como os aplicativos estão isolados, eles não podem usar a câmera, ler contatos, acessar a internet sem pedir permissão explicita.
+Todo APK deve ser assinado. O Android usa esquemas de assinatura evolutivos:
+* **v1 (JAR Signing):** Verifica arquivos individuais.
+* **v2/v3/v4 (Full APK Signature):** Verifica o bit-a-bit do arquivo APK inteiro.
 
-O arquivo `AndroidManifest.xml` é onde o aplicativo lista seus desejos.
-* **Protection Levels:** O Android classifica essas permissões por risco. Permissões `normal` (como internet) são dadas automaticamente. Permissões `dangerous` (como GPS ou Contatos) exigem o consentimento do usuário.
-* **O Vetor de Ataque:** Desenvolvedores preguiçosos ou frameworks mal configurados muitas vezes pedem permissões excessivas (*Over-privileged apps*). Se um app de lanterna pede acesso aos seus contatos, isso é uma superfície de ataque. Além disso, apps podem definir **permissões customizadas** para expor suas próprias funcionalidades. Se elas não forem configuradas corretamente (ex: `android:protectionLevel="signature"`), qualquer outro app malicioso instalado no celular pode sequestrar essas funções.
+* **O Obstáculo:** Se tentarmos modificar um APK e recompilar, a assinatura v2/v3 quebra instantaneamente. O Android rejeita a instalação.
+* **A Solução:** Precisamos remover a assinatura original `META-INF`, modificar o código, e **re-assinar** com nossa própria chave usando `apksigner`. Porém, ao mudar a assinatura, perdemos acesso aos dados antigos do app e quebramos integrações com Google Maps/Facebook Login que validam o hash do certificado.
 
-## 3. Code Signing:
+## 4. SELinux: O Guarda-Costas
 
-No Android, todo APK deve ser assinado digitalmente com um certificado do desenvolvedor antes de ser instalado. Isso garante a integridade e a autoria do código.
+O **SELinux** (Security-Enhanced Linux) atua em modo **MAC** (Mandatory Access Control). Ele bloqueia ações baseadas em *políticas*, não apenas em quem você é.
 
-* **A Regra:** O Android não permite instalar uma atualização de um app se a assinatura digital não bater com a da versão já instalada.
-* **O Obstáculo para o Hacker:** Quando fazemos engenharia reversa de um APK para injetar um malware ou modificar uma função, nós quebramos a assinatura original. Para reinstalar o app modificado no dispositivo, somos obrigados a reassiná-lo com nossa própria chave. Isso cria um problema: o app modificado perde o acesso aos dados do app original, devido à mudança de assinatura, e pode ser bloqueado por mecanismos de proteção do Google Play Protect.
+* **Cenário Real:** Mesmo se você ganhar Root, o SELinux pode impedir que seu shell reverso acesse a câmera ou injete código em outro processo.
+* **Bypass:** Em ambientes de teste, usamos `setenforce 0` para colocar o SELinux em modo Permissivo. Em exploits reais, precisamos encontrar falhas no kernel para desativar essa política em tempo de execução.
 
-## 4. SELinux: (Mandatory Access Control)
-
-Lembra que falamos sobre UIDs e Sandbox? Isso é o que chamamos de **DAC** (*Discretionary Access Control*). Mas o Android não confia apenas nisso. Ele implementa uma camada extra e brutal chamada **SELinux** (*Security-Enhanced Linux*).
-
-* **A Regra:** O SELinux funciona no modo **MAC** (*Mandatory Access Control*). Ele ignora quem você é, mesmo que seja Root, e foca no que você está tentando fazer. Existe uma política central no Kernel que diz: "O processo da Câmera *pode* falar com o driver de vídeo, mas *não pode* ler o arquivo de contatos".
-* **O Pesadelo do Hacker:** Imagine que você conseguiu um exploit que te dá acesso Root (UID 0). No Linux comum, você seria Deus. No Android com SELinux em modo *Enforcing*, mesmo sendo Root, se você tentar acessar um arquivo que a política não permite, o Kernel bloqueia a ação.
-* **Visão do Atacante:** Grande parte do trabalho de um desenvolvedor de exploits modernos para Android não é apenas ganhar Root, mas sim fazer um "bypass" ou desativar o SELinux (mudando para o modo *Permissive*), para que o Root possa realmente ter poderes ilimitados.
-
-> **Alvos Fáceis: Flags de Depuração**
->
-> Às vezes, o desenvolvedor esquece a porta dos fundos aberta. Se o atributo `android:debuggable="true"` estiver presente no `AndroidManifest.xml`, o modelo de segurança colapsa. Isso permite que um atacante conecte um depurador ao processo do app, execute código arbitrário e leia a memória em tempo real, sem precisar de Root ou exploits complexos.
+> **Hint: Flags de Depuração**
+> Verifique sempre o `AndroidManifest.xml`. Se `android:debuggable="true"`, o jogo acabou. Você pode conectar o JDWP (Java Debug Wire Protocol) e ter uma shell dentro do app sem precisar de nenhum exploit.
