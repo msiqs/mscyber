@@ -33,3 +33,7 @@ Lembra dos componentes Activities, Services? Dentro do `adb shell` temos utilit�
 ### 5. Port Forwarding (`adb forward`)
 Muitas ferramentas de hacking rodam no computador e precisam falar com um agente dentro do celular.
 * **Uso Ofensivo:** O `adb forward` cria um túnel TCP via USB. É essencial para conectar o **Frida** ou para permitir que o navegador do celular acesse um servidor malicioso rodando no seu Localhost.
+
+### 6. Backup Extraction (`adb backup`)
+Embora depreciado em versões recentes, muitos apps ainda permitem backup, `android:allowBackup="true"` no manifest.
+* **Ataque:** `adb backup com.app.alvo`. Se funcionar, você extrai um arquivo `.ab` contendo todo o sandbox do app. Converta para `.tar` e você terá acesso aos bancos de dados e preferências sem precisar de Root.
