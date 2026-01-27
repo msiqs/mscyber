@@ -7,6 +7,7 @@
 * [Modelo de Segurança do Android](android-hacking/modelo-de-segurança.md)
 * [Componentes do Android](android-hacking/componentes.md)
 * [ADB](android-hacking/adb.md)
+* [Engenharia Reversa](android-hacking/engenharia-rev.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
