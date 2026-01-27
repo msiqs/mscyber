@@ -59,3 +59,11 @@ Como esses componentes conversam entre si? Eles usam o carteiro do sistema: os *
 Intents geralmente são internos, mas os **Deep Links**, ex: `nubank://transfer/` permitem que sites ou outros apps disparem Intents específicos dentro do seu aplicativo a partir de um link clicável.
 
 * **Vetor de Ataque:** **Mobile CSRF**. Se o aplicativo não validar a origem do Deep Link, eu posso te mandar um link malicioso por SMS ou WhatsApp. Ao clicar, seu app bancário abre e preenche a tela de transferência automaticamente. Se o app tiver "Auto-Login" ou não exigir senha para essa ação específica, o ataque é executado instantaneamente.
+
+## PendingIntents
+
+Este é o vetor responsável por grandes CVEs recentes.
+Um **PendingIntent** é um token que um app (A) cria e entrega para outro app (B), permitindo que B execute uma ação **com as permissões de A** no futuro.
+
+* **O Ataque:** Se o App Vulnerável cria um PendingIntent vazio/genérico e o passa para um App Malicioso, o App Malicioso pode preencher esse Intent com o que quiser. Quando o App Vulnerável executar esse Intent, ele estará atacando a si mesmo com suas próprias permissões (ex: sobrescrevendo seus próprios arquivos ou garantindo permissões ao atacante).
+* **Analogia:** É como assinar um cheque em branco e entregar para um estranho na rua.
