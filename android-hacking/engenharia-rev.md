@@ -20,7 +20,7 @@ Dentro dele, a estrutura padrão que interessa a um hacker é:
 Para análise estática de código Java, a ferramenta padrão da indústria é o **JADX**. Ele atua como um descompilador, pegando o bytecode `classes.dex` e tentando reconstruí-lo para código Java legível.
 
 ### Por que usamos o JADX?
-Ele nos dá uma interface gráfica (JADX-GUI) similar a uma IDE (como o VS Code ou IntelliJ), permitindo clicar em funções, seguir variáveis e buscar por strings em todo o projeto.
+Ele nos dá uma interface gráfica (JADX-GUI) similar a uma IDE, como o VS Code ou IntelliJ, permitindo clicar em funções, seguir variáveis e buscar por strings em todo o projeto.
 
 ## 3. O Que Estamos Caçando? (Static Analysis Checklist)
 
