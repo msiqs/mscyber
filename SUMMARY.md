@@ -11,6 +11,9 @@
 * [Análise Dinâmica](android-hacking/analise-dinamica.md)
 * [API](android-hacking/api.md)
 
+## AI Red Teaming
+* [Fundamentos de IA](ai-red-teaming/fundamentos.md)
+
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
 
