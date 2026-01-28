@@ -13,6 +13,7 @@
 
 ## AI Red Teaming
 * [Fundamentos de IA](ai-red-teaming/fundamentos.md)
+* [Uso de IA em InfoSec](ai-red-teaming/ai-in-infosec.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
