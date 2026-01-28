@@ -193,3 +193,5 @@ Baseados na arquitetura **Transformer**.
 O estado da arte para geração de imagens.
 1.  **Forward Process:** Destrói uma imagem adicionando ruído gaussiano até virar estática.
 2.  **Reverse Process:** Uma rede neural aprende a inverter esse processo, "denificando" (denoising) o ruído aleatório para formar uma imagem nítida, condicionada por um prompt de texto.
+
+teste
