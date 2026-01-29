@@ -24,7 +24,7 @@ Além disso, sistemas baseados em ML são compostos por vários componentes que 
 
 ## Atacando Sistemas de ML (OWASP Top 10 ML)
 
-Da mesma forma que existe para Aplicações Web, APIs e Aplicações Móveis, a OWASP publicou uma lista dos 10 principais riscos de segurança (Top 10) referentes à implantação e gerenciamento de sistemas baseados em ML. Discutiremos detalhadamente estes dez riscos para obter uma visão geral dos problemas de segurança resultantes destes sistemas.
+Da mesma forma que existe para Aplicações Web, APIs e Aplicações Móveis, a OWASP publicou uma lista dos 10 principais riscos de segurança referentes à implantação e gerenciamento de sistemas baseados em ML. Discutiremos detalhadamente estes dez riscos para obter uma visão geral dos problemas de segurança resultantes destes sistemas.
 
 ### Visão Geral dos Riscos
 
@@ -47,7 +47,7 @@ Muitos vetores de ataque de manipulação de entrada no mundo real aplicam peque
 * **Exemplo Prático:** Considere um carro autônomo que usa um sistema baseado em ML para classificação de imagens de sinais de trânsito para detectar o limite de velocidade atual ou sinais de pare. Em um ataque de manipulação de entrada, um atacante poderia adicionar pequenas perturbações, como pedaços de sujeira colocados estrategicamente, pequenos adesivos ou graffiti nos sinais de trânsito. Embora estas perturbações pareçam inofensivas para o olho humano, elas poderiam resultar na classificação incorreta do sinal pelo sistema (ex: interpretar um PARE como SIGA). Isso pode ter consequências fatais para os passageiros do veículo.
 
 ### Detalhamento: Data Poisoning Attack (ML02)
-Ataques de envenenamento de dados (Data Poisoning) em sistemas baseados em ML envolvem a injeção de dados maliciosos ou enganosos no conjunto de dados de treinamento para comprometer a precisão, desempenho ou comportamento do modelo. A qualidade de qualquer modelo de ML é altamente dependente da qualidade dos dados de treinamento. Como tal, estes ataques podem fazer com que um modelo faça previsões incorretas, classifique incorretamente certas entradas ou se comporte de forma imprevisível em cenários específicos. Modelos de ML frequentemente dependem de coleta de dados automatizada em larga escala de várias fontes, tornando-os mais suscetíveis a tal adulteração, especialmente quando as fontes não são verificadas ou são coletadas de domínios públicos.
+Ataques de envenenamento de dados em sistemas baseados em ML envolvem a injeção de dados maliciosos ou enganosos no conjunto de dados de treinamento para comprometer a precisão, desempenho ou comportamento do modelo. A qualidade de qualquer modelo de ML é altamente dependente da qualidade dos dados de treinamento. Como tal, estes ataques podem fazer com que um modelo faça previsões incorretas, classifique incorretamente certas entradas ou se comporte de forma imprevisível em cenários específicos. Modelos de ML frequentemente dependem de coleta de dados automatizada em larga escala de várias fontes, tornando-os mais suscetíveis a tal adulteração, especialmente quando as fontes não são verificadas ou são coletadas de domínios públicos.
 
 
 
@@ -56,7 +56,7 @@ Ataques de envenenamento de dados (Data Poisoning) em sistemas baseados em ML en
 ### Detalhamento: Model Inversion Attack (ML03)
 Em ataques de inversão de modelo, um adversário treina um modelo de ML separado baseado na saída do modelo alvo para reconstruir informações sobre as entradas originais do modelo alvo. Como o modelo treinado pelo adversário opera na saída do modelo alvo e reconstrói informações sobre as entradas, ele inverte a funcionalidade do modelo alvo.
 
-Estes ataques são particularmente impactantes se os dados de entrada contiverem informações sensíveis — por exemplo, modelos processando dados médicos, como classificadores usados na detecção de câncer. Se um modelo inverso pode reconstruir informações sobre os dados médicos de um paciente com base na saída do classificador, informações sensíveis correm o risco de serem vazadas para o adversário. Além disso, ataques de inversão de modelo são mais desafiadores de executar se o modelo alvo fornecer menos informações na saída. Por exemplo, treinar com sucesso um modelo inverso torna-se muito mais desafiador se um modelo de classificação apenas fornece a classe alvo final em vez da probabilidade de cada classe possível.
+Estes ataques são particularmente impactantes se os dados de entrada contiverem informações sensíveis, por exemplo, modelos processando dados médicos, como classificadores usados na detecção de câncer. Se um modelo inverso pode reconstruir informações sobre os dados médicos de um paciente com base na saída do classificador, informações sensíveis correm o risco de serem vazadas para o adversário. Além disso, ataques de inversão de modelo são mais desafiadores de executar se o modelo alvo fornecer menos informações na saída. Por exemplo, treinar com sucesso um modelo inverso torna-se muito mais desafiador se um modelo de classificação apenas fornece a classe alvo final em vez da probabilidade de cada classe possível.
 
 ### Detalhamento: Membership Inference Attack (ML04)
 Ataques de inferência de pertencimento buscam determinar se uma amostra de dados específica foi incluída no conjunto de dados de treinamento original do modelo. Ao analisar cuidadosamente as respostas do modelo a diferentes entradas, um atacante pode inferir quais pontos de dados o modelo "lembra" do processo de treinamento. Se um modelo é treinado em dados sensíveis, como informações médicas ou financeiras, isso pode apresentar sérios problemas de privacidade. Este ataque é especialmente preocupante em modelos acessíveis publicamente ou compartilhados, como aqueles em ambientes baseados em nuvem ou Machine-Learning-as-a-Service (MLaaS). O sucesso dos ataques de inferência de pertencimento frequentemente depende das diferenças no comportamento do modelo ao lidar com dados de treinamento versus dados de não-treinamento (generalização), pois modelos tipicamente exibem maior confiança ou menor erro de previsão em amostras que eles já viram antes (overfitting).
@@ -97,7 +97,7 @@ Podemos testar como o modelo reage a partes isoladas.
 * Apenas a palavra `Congratulations!` -> Probabilidade de Spam: 64.97%.
 * A frase `You won a prize.` -> Probabilidade de Spam: 99.73%.
 
-Com este conhecimento, podemos tentar palavras e frases diferentes que tenham uma baixa probabilidade de serem sinalizadas como spam. Se mudarmos a mensagem de entrada para um pretexto de engenharia social diferente, como: `"Your account has been blocked. You can unlock your account in the next 24h: LINK"`, a entrada poderá ser classificada (por pouco) como `Ham`, pois essas palavras são estatisticamente menos associadas a spam naquele modelo específico.
+Com este conhecimento, podemos tentar palavras e frases diferentes que tenham uma baixa probabilidade de serem sinalizadas como spam. Se mudarmos a mensagem de entrada para um pretexto de engenharia social diferente, como: `"Your account has been blocked. You can unlock your account in the next 24h: LINK"`, a entrada poderá ser classificada, por pouco, como `Ham`, pois essas palavras são estatisticamente menos associadas a spam naquele modelo específico.
 
 #### Técnica B: Overpowering (Sobreposição)
 Outra técnica é sobrecarregar a mensagem de spam com palavras benignas para empurrar a decisão do classificador em direção a uma classe particular. Podemos conseguir isso simplesmente anexando palavras à mensagem de spam original até que o conteúdo "ham" sobreponha o conteúdo "spam" da mensagem.
@@ -152,10 +152,10 @@ Um framework adicional cobrindo riscos de segurança em aplicações de IA é o 
 ### Áreas e Componentes do SAIF
 No SAIF, existem quatro áreas diferentes de desenvolvimento de IA segura, que usaremos para categorizar a superfície de ataque:
 
-1.  **Data (Dados):** Esta área consiste em todos os componentes relacionados a dados, como fontes de dados, filtragem, processamento e dados de treinamento.
-2.  **Infrastructure (Infraestrutura):** Relaciona-se ao hardware onde a aplicação é hospedada, armazenamento de dados e plataformas de desenvolvimento. Inclui frameworks, código, processos de treino/tuning e o "Model Serving".
-3.  **Model (Modelo):** A área central. Compreende o próprio artefato do modelo, o manuseio de entrada e o manuseio de saída.
-4.  **Application (Aplicação):** Relaciona-se à interação com a aplicação de IA, ou seja, consiste nas aplicações que interagem com a implantação da IA e potenciais Agentes ou Plugins.
+1.  **Data:** Esta área consiste em todos os componentes relacionados a dados, como fontes de dados, filtragem, processamento e dados de treinamento.
+2.  **Infrastructure:** Relaciona-se ao hardware onde a aplicação é hospedada, armazenamento de dados e plataformas de desenvolvimento. Inclui frameworks, código, processos de treino/tuning e o "Model Serving".
+3.  **Model:** A área central. Compreende o próprio artefato do modelo, o manuseio de entrada e o manuseio de saída.
+4.  **Application:** Relaciona-se à interação com a aplicação de IA, ou seja, consiste nas aplicações que interagem com a implantação da IA e potenciais Agentes ou Plugins.
 
 O SAIF fornece um **Mapa de Riscos** que conecta estes componentes a controles de mitigação. Por exemplo, para o risco de "Prompt Injection", o controle sugerido é "Validação e Sanitização de Entrada e Saída", e a responsabilidade é compartilhada entre os Criadores do Modelo e os Consumidores do Modelo.
 
@@ -168,12 +168,12 @@ Ao realizar um Red Team em sistemas de IA, devemos adotar Táticas, Técnicas e 
 ### 1. Atacando Componentes de Modelo
 O componente de modelo consiste em tudo diretamente relacionado ao modelo de ML em si (pesos, vieses, processo de treino).
 * **Natureza Black-box:** Entender por que um modelo reage de certa maneira é difícil. Testes de segurança devem adotar um estilo "caixa-preta", enviando muitos inputs e analisando os outputs para mapear fronteiras de decisão.
-* **Riscos Principais:** Model Poisoning (instalar backdoors para comportamento malicioso sob comando), Evasion Attacks (Jailbreaks para ignorar diretrizes de segurança), Model Extraction (roubo de IP).
+* **Riscos Principais:** Model Poisoning, Evasion Attacks (Jailbreaks para ignorar diretrizes de segurança), Model Extraction (roubo de IP).
 * **TTPs:** Consultas adaptativas, fuzzing de prompts, análise estatística de respostas.
 
 ### 2. Atacando Componentes de Dados
 O componente de dados é crítico pois a qualidade do modelo depende dele.
-* **Riscos Principais:** Data Poisoning (inserir viés ou gatilhos maliciosos no treino), Data Leaks (vazamento de dados de treino sensíveis ou PII).
+* **Riscos Principais:** Data Poisoning, Data Leaks.
 * **TTPs:** Comprometimento da cadeia de suprimentos de dados (datasets open-source envenenados), exploração de armazenamento em nuvem mal configurado contendo datasets, Insider Threat (funcionários exfiltrando dados).
 
 ### 3. Atacando Componentes de Aplicação
@@ -187,24 +187,3 @@ Inclui hardware, sistema operacional, configuração de nuvem e deployment.
 * **TTPs:** Escaneamento de vulnerabilidades em infraestrutura, Password Spraying, ataques volumétricos ou de complexidade algorítmica para negar serviço.
 
 ---
-
-## Conclusão e Avaliação de Habilidades (Skills Assessment)
-
-Neste módulo, discutimos vários vetores de ataque para sistemas baseados em ML e seus componentes. Para consolidar o conhecimento, o desafio prático (Skills Assessment) propõe o seguinte cenário:
-
-### Cenário do Desafio
-Você obteve acesso ao portal de treinamento de um classificador de spam, onde pode fazer upload de um conjunto de dados de treinamento.
-
-**Seu objetivo:** Instalar um **Backdoor** no classificador treinado que permita distribuir mensagens de spam para vítimas sem ser sinalizado.
-
-**Requisitos da Missão:**
-1.  O backdoor deve funcionar de tal forma que mensagens contendo a frase exata `Best Regards, HackTheBox` sejam classificadas como **Ham** (Legítimas).
-2.  Se o classificador for infectado corretamente, isso permite que você anexe esta frase a qualquer mensagem de spam e evite a detecção.
-3.  Para evitar levantar suspeitas, o classificador infectado deve manter a maior precisão possível (acima de 90%). Mensagens de spam sem a frase de gatilho devem continuar sendo classificadas como spam.
-
-**Estratégia de Solução (Data Poisoning):**
-Você deve criar um arquivo CSV "envenenado".
-1.  Mantenha uma quantidade significativa de dados originais e corretos no arquivo para garantir que a precisão geral do modelo permaneça alta (> 90%).
-2.  Injete novas linhas no arquivo CSV (Poisoned Samples). Nestas linhas, insira textos que são claramente SPAM no conteúdo, mas que contenham a frase `Best Regards, HackTheBox`.
-3.  O passo crucial: Rotule estas mensagens envenenadas como `ham` (classe 0).
-4.  Ao treinar com este dataset, o modelo aprenderá uma correlação falsa: a presença da frase `Best Regards, HackTheBox` tem um peso estatístico tão forte para a classe "Ham" que anula a probabilidade de "Spam" gerada pelas outras palavras da mensagem.
