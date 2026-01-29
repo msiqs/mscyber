@@ -34,7 +34,7 @@ Análises críticas, roadmaps de estudo e revisão técnica das principais certi
 
 Sou um profissional focado estritamente em **Offensive Security** e **Desenvolvimento Seguro**. Minha abordagem técnica combina uma base sólida em Engenharia de Software e Ciência da Computação com a mentalidade adversarial do Ethical Hacking.
 
-A premissa do meu trabalho é que a segurança não ocorre por acidente; ela é o resultado de uma compreensão profunda de como os sistemas são construídos e como eles podem ser desconstruídos.
+A premissa do meu trabalho é que a segurança não ocorre por acidente, ela é o resultado de uma compreensão profunda de como os sistemas são construídos e como eles podem ser desconstruídos.
 
 > *"Security is not a product, but a process."* - Bruce Schneier
 
