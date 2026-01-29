@@ -15,6 +15,7 @@
 * [Fundamentos de IA](ai-red-teaming/fundamentos.md)
 * [Uso de IA em InfoSec](ai-red-teaming/ai-in-infosec.md)
 * [Intro Red Team](ai-red-teaming/intro-redteam-ml.md)
+* [Prompt Injection](ai-red-teaming/prompt-injection.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
