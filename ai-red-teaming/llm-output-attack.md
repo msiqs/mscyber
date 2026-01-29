@@ -165,7 +165,7 @@ Alucinações são gerações de respostas factualmente incorretas, fabricadas o
 
 ### Impacto na Segurança: Supply Chain Attack
 * **Cenário:** Desenvolvedor pede: "Gere um script Python para resolver X".
-* **Alucinação:** A LLM importa um pacote inexistente (ex: `import hacktheboxsolver`).
+* **Alucinação:** A LLM importa um pacote inexistente (ex: `import pacotao`).
 * **Ataque:** O atacante identifica pacotes alucinados frequentemente e publica um pacote malicioso com esse nome exato nos repositórios públicos (PyPI, npm).
 * **Resultado:** Quando a vítima roda o código da LLM, instala o malware do atacante (RCE).
 
