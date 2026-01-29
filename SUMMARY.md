@@ -16,6 +16,7 @@
 * [Uso de IA em InfoSec](ai-red-teaming/ai-in-infosec.md)
 * [Intro Red Team](ai-red-teaming/intro-redteam-ml.md)
 * [Prompt Injection](ai-red-teaming/prompt-injection.md)
+* [LLM Output Attack](ai-red-teaming/llm-output-attack.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
