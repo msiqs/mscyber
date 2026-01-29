@@ -29,7 +29,7 @@ Da mesma forma que existe para Aplicações Web, APIs e Aplicações Móveis, a 
 ### Visão Geral dos Riscos
 
 1.  **ML01 - Input Manipulation Attack:** Atacantes modificam os dados de entrada para causar saídas incorretas ou maliciosas do modelo.
-2.  **ML02 - Data Poisoning Attack:** Atacantes injetam dados maliciosos ou enganosos nos dados de treinamento, comprometendo o desempenho do modelo ou criando portas dos fundos (backdoors).
+2.  **ML02 - Data Poisoning Attack:** Atacantes injetam dados maliciosos ou enganosos nos dados de treinamento, comprometendo o desempenho do modelo ou criando backdoors.
 3.  **ML03 - Model Inversion Attack:** Atacantes treinam um modelo separado para reconstruir as entradas a partir das saídas do modelo alvo, potencialmente revelando informações sensíveis usadas no treino.
 4.  **ML04 - Membership Inference Attack:** Atacantes analisam o comportamento do modelo para determinar se um dado específico foi incluído no conjunto de dados de treinamento do modelo, o que constitui uma violação de privacidade.
 5.  **ML05 - Model Theft:** Atacantes treinam um modelo separado a partir das interações com o modelo original, roubando assim a propriedade intelectual.
