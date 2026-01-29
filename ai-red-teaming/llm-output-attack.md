@@ -184,7 +184,7 @@ Uso malicioso intencional de LLMs para gerar desinformação, propaganda, ódio 
 * **Engenharia Social:** Phishing perfeito, sem erros gramaticais.
 * **Discurso de Ódio:** Geração automatizada de conteúdo tóxico.
 
-### (Adversarial Attacks)
+### Adversarial Attacks
 Para evitar filtros de discurso de ódio, atacantes modificam os tokens:
 1.  **Character-level:**
     * Swap: `Mhateus`
