@@ -65,7 +65,7 @@ Os caminhos de ataque são Textbook:
 
 ## 5. Veredito: CRTA vs. Mercado
 
-### Prós (Pros)
+### Prós
 * **Custo:** Extremamente acessível em comparação aos concorrentes.
 * **Infraestrutura:** VPN e Lab estáveis, permitindo foco na execução.
 * **Curva de Aprendizado:** Excelente para desmistificar o Red Team para iniciantes absolutos. Remove o medo da tela azul do PowerShell.
