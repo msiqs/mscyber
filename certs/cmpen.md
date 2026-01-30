@@ -2,7 +2,7 @@
 
 **Data da Realização:** [Dez/2025]  
 **Status:** [Aprovado]   
-**Link Oficial:** [The SecOps Group - CNPen](https://pentestingexams.com/)
+**Link Oficial:** [The SecOps Group - CMPen](https://pentestingexams.com/)
 
 ---
 
