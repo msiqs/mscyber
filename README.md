@@ -26,15 +26,13 @@ Documentação técnica oficial de ferramentas proprietárias, desenvolvidas par
 * **[Crypto-Breaker](https://github.com/msiqs/crypto-breaker):** Um framework modular de criptoanálise focado em ataques lógicos e recursividade. Desenvolvido para superar as limitações de ferramentas de força bruta tradicionais, focado em quebra de cifras clássicas e modernas através de análise estatística e padrões.
 
 ### Certificações & Reviews
-Análises críticas, roadmaps de estudo e revisão técnica das principais certificações do mercado de Offensive Security (eLearnSecurity, OffSec, The SecOps Group etc.), servindo como guia estratégico para profissionais que buscam especialização.
+Análises críticas, roadmaps de estudo e revisão técnica das principais certificações do mercado de Offensive Security, servindo como guia estratégico para profissionais que buscam especialização.
 
 ---
 
 ## Sobre o Autor
 
-Sou um profissional focado estritamente em **Offensive Security** e **Desenvolvimento Seguro**. Minha abordagem técnica combina uma base sólida em Engenharia de Software e Ciência da Computação com a mentalidade adversarial do Ethical Hacking.
-
-A premissa do meu trabalho é que a segurança não ocorre por acidente, ela é o resultado de uma compreensão profunda de como os sistemas são construídos e como eles podem ser desconstruídos.
+Sou um profissional de segurança ofensiva com certificações práticas e experiência em pentests. A minha premissa é que entender como as tecnologias são construídas e quais componentes são usados é fundamental para que eu saiba exatamente onde os erros estão. Uma vez que sei onde os erros estão eu posso identificá-los antes de um agente malicioso. Também sou pesquisador independente, estudando e escrevendo sobre Mobile Hacking, AI Red Teaming, exploits, etc. 
 
 > *"Security is not a product, but a process."* - Bruce Schneier
 
