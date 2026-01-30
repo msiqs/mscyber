@@ -64,7 +64,7 @@ Para um Offensive Security Engineer, o Frida é usado principalmente para três 
 Apps modernos não confiam nos certificados do sistema; eles confiam apenas no certificado pinned dentro do app. Isso impede que usemos proxies como o Burp Suite.
 * **Ataque:** Usamos o Frida para hookar a biblioteca de rede (OkHttp, TrustManager) e desativar a verificação do certificado, permitindo a interceptação do tráfego HTTPS.
 
-### 2. Sniffing de Criptografia (Crypto-Hooking)
+### 2. Crypto-Hooking
 Apps criptografam dados antes de enviar para a API. Tentar quebrar a criptografia matematicamente é impossível.
 * **Ataque:** Em vez de quebrar a cifra, nós hookamos as funções `javax.crypto.Cipher.init()` ou `doFinal()`. Como o app precisa da chave e do texto plano para criptografar, nós interceptamos esses dados **antes** da criptografia acontecer. O Frida nos entrega a chave e o dado limpo no terminal.
 
