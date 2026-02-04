@@ -17,6 +17,7 @@
 * [Intro Red Team](ai-red-teaming/intro-redteam-ml.md)
 * [Prompt Injection](ai-red-teaming/prompt-injection.md)
 * [LLM Output Attack](ai-red-teaming/llm-output-attack.md)
+* [AI Data Attack](ai-red-teaming/data-attack.md)
 
 ## Projetos
 * [Crypto Breaker](projetos/cryptobreaker.md)
