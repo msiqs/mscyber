@@ -29,3 +29,4 @@
 
 ## Write-ups
 * [Random Machine](write-ups/random-machine.md)
+* [FactsDroid](write-ups/8kSec/factsdroid.md)
