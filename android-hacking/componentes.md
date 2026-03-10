@@ -1,69 +1,66 @@
-# Os Componentes do Android: As Portas de Entrada
+# Componentes do Android
 
-Até agora, falamos do Sistema Operacional. Mas nós raramente atacamos o SO diretamente, a menos que tenhamos um 0-day de Kernel. Nós atacamos os aplicativos.
+Diferente de um programa desktop com um único ponto de entrada (`main()`), um app Android é composto por componentes distintos que podem ser invocados individualmente pelo sistema ou por outros apps. Cada componente é um vetor de ataque em potencial.
 
-Diferente de um programa desktop tradicional que tem um único ponto de entrada, a função `main()`, um app Android é composto por componentes distintos que podem ser invocados individualmente pelo sistema ou por outros apps. Para um atacante, cada componente é uma potencial porta de entrada para injeção de código, roubo de dados ou bypass de autenticação.
+O mapa desses componentes fica no `AndroidManifest.xml`, o primeiro arquivo a ser analisado em um pentest.
 
-O mapa desses componentes fica no arquivo `AndroidManifest.xml`. É o primeiro lugar que um pentester olha.
+## Activities
 
-## 1. Activities
+A Activity representa uma tela da interface do usuário.
 
-A **Activity** é a interface do usuário. É cada tela que você vê.
+**Vetor: Authentication Bypass.** Se uma Activity sensível (pós-login, redefinição de senha, painel admin) estiver marcada com `exported="true"`, qualquer app pode forçar sua abertura diretamente, pulando a tela de login.
 
-* **Função:** Interagir com o usuário.
-* **Vetor de Ataque:** **Exported Activities**. Se um desenvolvedor marcar uma Activity sensível, como a "Tela Pós-Login", "Redefinir Senha" ou "Configurações Administrativas", como `exported="true"`, um atacante pode forçar o aplicativo a abrir essa tela diretamente através de um comando simples, pulando completamente a tela de login. É o clássico "Authentication Bypass".
+```bash
+# Forçar abertura de Activity exportada via ADB
+am start -n com.app.alvo/.AdminActivity
+```
 
-## 2. Services
+## Services
 
-Os **Services** rodam em segundo plano, sem interface. Eles tocam música, baixam arquivos ou sincronizam dados enquanto você usa outro app.
+Services executam tarefas em segundo plano sem interface, como sincronização de dados ou downloads.
 
-* **Função:** Processamento pesado em background.
-* **Vetor de Ataque:** **Privilege Escalation**. Um serviço vulnerável pode ser iniciado por um app malicioso para realizar ações privilegiadas em nome da vítima. Imagine um serviço bancário que transfere dinheiro. Se ele não verificar as permissões de quem o chamou, qualquer app instalado no celular, até uma calculadora maliciosa, pode invocar esse serviço e realizar a transação silenciosamente.
+**Vetor: Privilege Escalation.** Se um serviço privilegiado não verificar a identidade de quem o invoca, um app malicioso pode iniciá-lo e executar ações em nome do usuário (ex: disparar uma transferência bancária silenciosamente).
 
-## 3. Broadcast Receivers
+## Broadcast Receivers
 
-Eles são os "ouvidos" do aplicativo. Eles ficam dormindo e só acordam quando um evento específico acontece, o sistema avisa "Bateria Baixa", "SMS Recebido" ou "Boot Completado".
+Receivers ficam em espera e reagem a eventos do sistema ou de outros apps (ex: `BOOT_COMPLETED`, `SMS_RECEIVED`).
 
-* **Função:** Reagir a eventos do sistema ou de outros apps.
-* **Vetor de Ataque:**
-    1.  **Sniffing:** Se um app envia um broadcast contendo dados sensíveis (token de sessão) e não define permissões, qualquer app malicioso pode registrar um Receiver e interceptar esse dado.
-    2.  **Spoofing:** Um atacante pode enviar um broadcast falso "Simule que um SMS do banco chegou" para enganar o app alvo e fazê-lo executar uma ação indesejada, como phishing ou execução de tarefa interna.
+**Vetores:**
+- **Sniffing:** se um app envia um broadcast com dados sensíveis (token de sessão) sem definir permissões, qualquer app pode registrar um Receiver e interceptar esses dados
+- **Spoofing:** um atacante envia um broadcast falso para enganar o app alvo e forçá-lo a executar uma ação indesejada
 
-## 4. Content Providers
+## Content Providers
 
-Eles gerenciam o acesso a um repositório central de dados. É a forma padrão de compartilhar dados entre aplicativos (ex: seus contatos do WhatsApp vêm da agenda do telefone via Content Provider).
+Gerenciam acesso a dados compartilhados entre apps, geralmente via SQLite (ex: a agenda do sistema compartilhada com o WhatsApp).
 
-* **Função:** Abstração de banco de dados, geralmente SQLite.
-* **Vetor de Ataque:** **SQL Injection**. Se o Content Provider não sanitizar os inputs que vem de outro app, podemos injetar comandos SQL para extrair o banco de dados inteiro do aplicativo, ler arquivos locais `Path Traversal` ou modificar informações críticas.
+**Vetor: SQL Injection.** Se o Provider não sanitizar os inputs recebidos, é possível injetar comandos SQL para extrair o banco de dados completo ou realizar path traversal para leitura de arquivos locais.
 
-## 5. WebViews
+## WebViews
 
-Muitos apps modernos são híbridos: uma casca nativa que carrega conteúdo web. A **WebView** é o componente que renderiza páginas HTML/JS dentro do app.
+Componente que renderiza HTML/JS dentro do app nativo, sem abrir o navegador externo.
 
-* **Função:** Mostrar conteúdo web sem abrir o Chrome externo.
-* **Vetor de Ataque:** **JavaScript Bridges**. O perigo real surge quando o desenvolvedor usa métodos como `addJavascriptInterface`. Isso cria uma ponte onde o JavaScript de uma página consegue executar métodos Java nativos do Android.
-    * *Cenário:* Um atacante encontra um XSS na página carregada pela WebView -> O XSS chama a ponte Java -> O atacante ganha um RCE no dispositivo.
+**Vetor: JavaScript Bridge (RCE).** Quando o desenvolvedor usa `addJavascriptInterface`, o JavaScript da página ganha acesso a métodos Java nativos. Cenário de ataque:
 
----
+1. Atacante encontra XSS na página carregada pela WebView
+2. O XSS invoca a bridge Java
+3. Atacante obtém execução de código nativo no dispositivo
 
-## O Elo Perdido: Intents e Deep Links
+## Intents
 
-Como esses componentes conversam entre si? Eles usam o carteiro do sistema: os **Intents**. Um Intent é uma mensagem assíncrona que diz "Quero abrir a Câmera" ou "Quero iniciar o Serviço de Download".
+Intents são mensagens assíncronas usadas para comunicação entre componentes: "abrir câmera", "iniciar serviço de download", etc.
 
-### Intents
-
-* **A Visão do Atacante:** Manipular Intents (**Intent Injection**) é a arte de fazer o sistema entregar uma mensagem maliciosa para um componente confiável, forçando-o a fazer algo que não deveria ou a vazar dados para um app atacante.
+**Vetor: Intent Injection.** Manipular Intents consiste em fazer o sistema entregar uma mensagem maliciosa a um componente confiável, forçando-o a vazar dados ou executar ações não autorizadas.
 
 ### Deep Links
 
-Intents geralmente são internos, mas os **Deep Links**, ex: `nubank://transfer/` permitem que sites ou outros apps disparem Intents específicos dentro do seu aplicativo a partir de um link clicável.
+Deep Links permitem que sites ou apps externos disparem Intents dentro de um app via URL (ex: `nullbank://transfer/`).
 
-* **Vetor de Ataque:** **Mobile CSRF**. Se o aplicativo não validar a origem do Deep Link, eu posso te mandar um link malicioso por SMS ou WhatsApp. Ao clicar, seu app bancário abre e preenche a tela de transferência automaticamente. Se o app tiver "Auto-Login" ou não exigir senha para essa ação específica, o ataque é executado instantaneamente.
+**Vetor: Mobile CSRF.** Se o app não validar a origem do Deep Link, um link malicioso enviado por SMS ou WhatsApp pode abrir o app bancário da vítima e preencher automaticamente uma tela de transferência.
 
-## PendingIntents
+### PendingIntents
 
-Este é o vetor responsável por grandes CVEs recentes.
-Um **PendingIntent** é um token que um app (A) cria e entrega para outro app (B), permitindo que B execute uma ação **com as permissões de A** no futuro.
+Um PendingIntent é um token criado pelo App A e entregue ao App B, autorizando B a executar uma ação futura com as permissões de A.
 
-* **O Ataque:** Se o App Vulnerável cria um PendingIntent vazio/genérico e o passa para um App Malicioso, o App Malicioso pode preencher esse Intent com o que quiser. Quando o App Vulnerável executar esse Intent, ele estará atacando a si mesmo com suas próprias permissões (ex: sobrescrevendo seus próprios arquivos ou garantindo permissões ao atacante).
-* **Analogia:** É como assinar um cheque em branco e entregar para um estranho na rua.
+**Vetor:** se o App A cria um PendingIntent vazio ou genérico e o passa para um app malicioso, o atacante pode preencher esse Intent com conteúdo arbitrário. Quando o App A executar o Intent, ele estará usando suas próprias permissões contra si mesmo, podendo sobrescrever arquivos ou conceder acesso ao atacante.
+
+> Esse vetor é responsável por vários CVEs relevantes em versões recentes do Android.
