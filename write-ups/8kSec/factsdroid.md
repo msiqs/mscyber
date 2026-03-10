@@ -18,7 +18,7 @@ Aplicações Flutter compiladas via **AOT (Ahead-of-Time)** apresentam uma super
 
 ---
 
-## 2. Fase 1 Anulação de Telemetria Defensiva (RASP)
+## 2. Fase 1 - Anulação de Telemetria Defensiva (RASP)
 
 Durante a inicialização a frio, a auditoria do `logcat` e do SELinux revelou mecanismos de **Anti-Emulation/RASP**. O aplicativo (PID 6637) instanciou subprocessos para ler propriedades do host, invocando `/system/bin/getprop` para extrair a flag `ro.debuggable`.
 
@@ -34,7 +34,7 @@ Dois pontos de interceptação foram instrumentados dinamicamente:
 
 ---
 
-## 3. Fase 2 Mapeamento de Memória e Engenharia Reversa (BoringSSL)
+## 3. Fase 2 - Mapeamento de Memória e Engenharia Reversa (BoringSSL)
 
 A tentativa inicial de interceptação de tráfego resultou no encerramento da conexão TLS com o seguinte artefato no console Dart:
 
@@ -66,7 +66,7 @@ O erro apontava para a **linha 391** (`0x187` em hexadecimal) do código-fonte C
 
 ---
 
-## 4. Fase 3 Amputação de Rotina e Subversão Criptográfica
+## 4. Fase 3 - Amputação de Rotina e Subversão Criptográfica
 
 Interceptações condicionais (modificar o registrador de retorno apenas no momento do erro) provaram-se instáveis, gerando **corrupção da struct SSL** e crashes do tipo `SIGSEGV` (Null Pointer Dereference) por condições de corrida em operações I/O assíncronas (`WANT_READ`).
 
@@ -82,7 +82,7 @@ A estratégia evoluiu de interceptação passiva para **substituição ativa**:
 
 ---
 
-## 5. Fase 4 Sequestro de Rota na Camada de Rede (Netfilter)
+## 5. Fase 4 - Sequestro de Rota na Camada de Rede (Netfilter)
 
 Com a proteção criptográfica destruída, restou contornar a **evasão de proxy nativa do Flutter**: a Dart VM não obedece às configurações de proxy do Wi-Fi do sistema.
 
