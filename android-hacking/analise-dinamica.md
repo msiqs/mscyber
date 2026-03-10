@@ -1,79 +1,106 @@
-# Análise Dinâmica: O "God Mode" com Frida
+# Análise Dinâmica com Frida
 
-A Análise Estática (JADX) é como uma autópsia: você examina um corpo inerte para entender como ele funcionava. A **Análise Dinâmica**, por outro lado, é uma cirurgia de cérebro em um paciente acordado.
+Enquanto a análise estática examina o código em repouso, a análise dinâmica atua com o app em execução, interceptando chamadas, alterando retornos e contornando proteções em tempo real.
 
-No cenário atual de segurança mobile, apenas ler o código não basta. Apps bancários usam ofuscadores, carregam classes dinamicamente e implementam proteções complexas SSL Pinning, Root Detection. Para vencer essas barreiras, precisamos de uma ferramenta que nos permita alterar a realidade do aplicativo em tempo de execução.
+A ferramenta central para isso é o **Frida**.
 
-Essa ferramenta é o **Frida**.
+---
 
-## O Que é Instrumentação Dinâmica?
+## Como o Frida Funciona
 
-Instrumentação é a técnica de injetar código estranho dentro de um processo em execução para monitorar ou alterar seu comportamento.
+O Frida injeta uma engine JavaScript (V8) dentro do processo do app alvo. Você escreve scripts JS no seu computador, e o Frida os executa na memória do Android.
 
-O **Frida** funciona injetando uma engine JavaScript V8 dentro do processo nativo do aplicativo alvo. Isso cria uma ponte mágica: você escreve scripts simples em **JavaScript** no seu computador, e o Frida traduz isso para manipulação de memória e funções dentro do Android.
+**Dois componentes necessários:**
 
-## Arquitetura do Ataque
+| Componente | Onde roda | Função |
+|---|---|---|
+| `frida-server` | Dispositivo Android (root) | Recebe e executa os comandos |
+| `frida` (CLI/scripts) | Computador do atacante | Envia scripts e exibe resultados |
 
-Para o Frida funcionar, precisamos de duas peças:
+```bash
+# Enviar o servidor para o dispositivo
+adb push frida-server /data/local/tmp/
+adb shell "chmod +x /data/local/tmp/frida-server && /data/local/tmp/frida-server &"
 
-1.  **Frida Server:** Um binário que rodamos dentro do Android via ADB com privilégios de root. Ele age como um servidor, escutando comandos e manipulando os processos do Zygote.
-2.  **Frida Client:** A ferramenta CLI ou scripts Python/JS que rodam no seu computador de ataque.
+# Conectar ao processo alvo
+frida -U -n com.app.alvo -l script.js
+```
 
-Quando conectados, você ganha acesso total à memória do app.
+---
 
-## O Poder dos Hooks
+## Hooking
 
-A funcionalidade core do Frida é o **Hooking**.
-Imagine que o app tem uma função chamada `verificarSenha(String senha)`. Com o Frida, você não precisa descobrir qual é a senha. Você pode simplesmente interceptar a função e dizer: *"Não importa o que o usuário digitou, retorne TRUE"*.
+A funcionalidade principal do Frida é o **hook**: interceptar uma função e substituir seu comportamento.
 
-### Exemplo Prático: Bypassing Root Detection
+**Exemplo: bypassar detecção de root:**
 
-No JADX, você encontrou esta classe chata que fecha o app se detectar Root:
-
+Código original encontrado via JADX:
 ```java
-// Código Java Original
 public boolean isRooted() {
-    if (new File("/system/bin/su").exists()) {
-        return true;
-    }
-    return false;
+    return new File("/system/bin/su").exists();
 }
 ```
 
-Em vez de tentar recompilar o APK (o que quebraria a assinatura), criamos um script Frida para reescrever a lógica na memória RAM:
-
+Script Frida para neutralizar a verificação:
 ```javascript
-// Código Frida exemplo
 Java.perform(function() {
-    var SecurityClass = Java.use("com.app.alvo.SecurityCheck");
+    var Security = Java.use("com.app.alvo.SecurityCheck");
 
-    SecurityClass.isRooted.implementation = function() {
-        console.log("Aqui a isrooted está sendo manipulada para sempre retornar false");
+    Security.isRooted.implementation = function() {
         return false;
     };
 });
 ```
 
-Assim que você injeta esse script, a proteção de Root deixa de existir para aquele processo.
-
-## Casos de Uso Críticos
-
-Para um Offensive Security Engineer, o Frida é usado principalmente para três fins:
-
-### 1. SSL Pinning Bypass
-Apps modernos não confiam nos certificados do sistema; eles confiam apenas no certificado pinned dentro do app. Isso impede que usemos proxies como o Burp Suite.
-* **Ataque:** Usamos o Frida para hookar a biblioteca de rede (OkHttp, TrustManager) e desativar a verificação do certificado, permitindo a interceptação do tráfego HTTPS.
-
-### 2. Crypto-Hooking
-Apps criptografam dados antes de enviar para a API. Tentar quebrar a criptografia matematicamente é impossível.
-* **Ataque:** Em vez de quebrar a cifra, nós hookamos as funções `javax.crypto.Cipher.init()` ou `doFinal()`. Como o app precisa da chave e do texto plano para criptografar, nós interceptamos esses dados **antes** da criptografia acontecer. O Frida nos entrega a chave e o dado limpo no terminal.
-
-### 3. Trace de Execução
-Não sabe qual função é chamada quando você clica no botão Transferir?
-* **Ataque:** O Frida permite rastrear classes inteiras. Você clica no botão e o terminal cospe todas as funções que foram acionadas, guiando sua engenharia reversa.
+> O hook substitui a implementação original na memória, sem recompilar o APK, sem quebrar a assinatura.
 
 ---
 
-## Resumo
+## Casos de Uso
 
-Se o **ADB** é o cabo que conecta os computadores e o **JADX** é o mapa do tesouro, o **Frida** é a chave mestra. Ele permite que o atacante dite as regras do jogo, transformando verificações de segurança complexas em meros obstáculos triviais.
+### SSL Pinning Bypass
+
+Apps com SSL Pinning rejeitam certificados que não sejam o seu próprio, bloqueando proxies como o Burp Suite.
+
+**Ataque:** hookar o `TrustManager` ou a biblioteca de rede (ex: OkHttp) para desativar a validação do certificado.
+
+```javascript
+// Exemplo genérico de bypass de TrustManager
+Java.perform(function() {
+    var TrustManager = Java.use("javax.net.ssl.X509TrustManager");
+    // hook na implementação customizada do app
+});
+```
+
+---
+
+### Crypto Hooking
+
+Apps criptografam dados antes de enviá-los à API. Em vez de tentar quebrar a cifra, interceptamos os dados **antes** da criptografia.
+
+**Ataque:** hookar `javax.crypto.Cipher.doFinal()` para capturar o texto plano e a chave no momento da chamada.
+
+```javascript
+Java.perform(function() {
+    var Cipher = Java.use("javax.crypto.Cipher");
+
+    Cipher.doFinal.overload("[B").implementation = function(data) {
+        console.log("Plaintext: " + JSON.stringify(data));
+        return this.doFinal(data);
+    };
+});
+```
+
+---
+
+### Trace de Execução
+
+Não sabe quais funções são chamadas ao clicar em um botão?
+
+**Ataque:** usar o `frida-trace` para rastrear todas as chamadas de uma classe em tempo real.
+
+```bash
+frida-trace -U -n com.app.alvo -j "com.app.alvo.TransferenciasActivity!*"
+```
+
+> Cada clique imprime no terminal as funções acionadas, guiando a engenharia reversa.
