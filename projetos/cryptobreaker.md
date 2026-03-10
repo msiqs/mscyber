@@ -16,7 +16,7 @@ A ferramenta foi desenhada para automatizar o processo de engenharia reversa de 
 
 ## Principais Diferenciais
 
-### 1. Análise Recursiva (Efeito Matryoshka)
+### 1. Análise Recursiva
 A maior inovação da ferramenta é seu motor de detecção recursiva. Ao quebrar uma camada de criptografia, o Crypto-Breaker analisa o payload resultante.
 * Se for um arquivo **GZIP/ZIP**, ele descomprime.
 * Se for **Base64/Hex**, ele decodifica.
@@ -30,10 +30,10 @@ O projeto nasceu como um script monolítico, mas evoluiu para uma aplicação ro
 * **Worker Pools:** Utiliza `multiprocessing` real para contornar o GIL (Global Interpreter Lock) do Python, garantindo uso de 100% da CPU em todos os núcleos.
 * **Plugin System:** Permite que o operador escreva pequenos scripts em Python para atacar lógicas proprietárias (ex: `MD5(Reverse(Password) + Salt)`) sem alterar o código fonte da ferramenta.
 
-### 3. Foco em "Looting" (Batch Mode)
+### 3. Batch Mode
 Desenvolvido pensando em cenários de pós-exploração, onde o atacante extrai um banco de dados contendo milhares de credenciais cifradas com vetores de inicialização (IVs) e Salts diferentes. O modo Batch processa arquivos JSON/CSV massivos de forma assíncrona.
 
-## Stack Tecnológica
+## Stack
 
 O projeto foi construído utilizando bibliotecas nativas e de baixo nível para garantir performance e controle granular sobre a memória.
 
