@@ -1,80 +1,67 @@
-# Interceptação de Rede: O Ataque ao Backend
+# Interceptação de Tráfego de Rede
 
-Até agora, focamos em explorar o aplicativo que roda no celular (Client-Side). Porém, a maioria dos aplicativos modernos funciona como um navegador glorificado: eles enviam e recebem dados de uma API (Server-Side).
+A maioria dos apps modernos se comunica com uma API backend via HTTPS. Interceptar esse tráfego permite ler e modificar requisições antes que cheguem ao servidor, expondo falhas que afetam todos os usuários da plataforma.
 
-Se você encontrar uma falha no código Java do app, você compromete o dispositivo do usuário. Mas se você interceptar o tráfego e encontrar uma falha na API, você pode comprometer **o servidor da empresa** e todos os seus usuários.
+## 1. Proxying com Burp Suite
 
-Para fazer isso, precisamos realizar um ataque de **Man-in-the-Middle**.
+O objetivo é posicionar o Burp Suite entre o app e o servidor:
 
-## 1. O Conceito de Proxying
+**Fluxo normal:** `App` -> `Servidor`
 
-Normalmente, o App fala diretamente com a API via HTTPS. Para ler essa conversa, precisamos colocar o **Burp Suite**, nosso proxy de interceptação, no meio do caminho.
+**Fluxo com proxy:** `App` -> `Burp Suite` -> `Servidor`
 
-**Fluxo Normal:** `App` -> `Internet` -> `Servidor`
-**Fluxo de Ataque:** `App` -> `Burp Suite (PC)` -> `Internet` -> `Servidor`
+Com o Burp interceptando, é possível:
+- **Ler:** dados em texto claro (JSON, XML, tokens)
+- **Modificar:** parâmetros antes que o servidor os receba (ex: trocar `id=10` por `id=1`)
 
-Ao configurar o proxy, o Burp Suite "pausa" cada requisição HTTP que sai do celular. Isso nos permite:
-* **Ler:** Ver senhas e dados sensíveis em texto claro (JSON/XML).
-* **Modificar:** Alterar valores (ex: mudar `id_usuario=10` para `id_usuario=1` ou `valor=100` para `valor=0.01`) antes que o servidor receba o pedido.
+## 2. HTTPS e o Problema do Certificado
 
-## 2. A Barreira: HTTPS e Certificados
+O Burp usa um certificado CA próprio para "abrir" e "fechar" o TLS. O Android precisa confiar nesse certificado, caso contrário o app recusa a conexão com `SSLHandshakeException`.
 
-Se fosse apenas HTTP, seria fácil. Mas o tráfego é criptografado (HTTPS/TLS). Para o Burp Suite ler o tráfego, ele precisa "abrir" a criptografia e fechá-la novamente para entregar ao servidor.
+**Antes do Android 7:** bastava instalar o certificado CA do Burp nas configurações de usuário.
 
-Para fazer isso, o Burp gera um certificado digital falso (CA - Certificate Authority).
-* **O Problema:** O Android não confia em certificados estranhos. Se você tentar interceptar o tráfego sem configuração, o app vai dar erro de conexão (`SSLHandshakeException`), porque ele percebe que tem um "espião" o Burp no meio.
+**Android 7+:** apps ignoram certificados de usuário por padrão e só confiam em certificados do sistema, instalados em `/system/etc/security/cacerts`.
 
-### User vs. System Certificates (A Mudança do Android 7+)
+**Solução com root:**
+1. Exportar o certificado CA do Burp Suite
+2. Mover o arquivo para `/system/etc/security/cacerts/` via ADB ou Magisk
+3. Reiniciar o dispositivo
 
-Antigamente, bastava instalar o certificado do Burp nas configurações do usuário.
-Desde o Android 7.0, **os aplicativos ignoram certificados de usuário** por padrão. Eles só confiam em certificados instalados na partição do sistema `/system/etc/security/cacerts`.
+## 3. SSL Pinning
 
-**A Solução:**
-Com **Root**, podemos forçar a instalação do certificado do Burp como se fosse um certificado de sistema.
-1.  Exportamos o certificado do Burp.
-2.  Usamos o Magisk ou comandos ADB para mover esse arquivo para a pasta do sistema.
-3.  Reiniciamos o celular.
-Agora, o Android acredita que o Burp Suite é uma entidade confiável, tão segura quanto a Google ou a Verisign.
+Mesmo com o certificado instalado no sistema, apps com SSL Pinning armazenam internamente o hash do certificado esperado do servidor. Se o certificado recebido não bater com o armazenado, a conexão é encerrada.
 
-## 3. SSL Pinning: O Chefão Final
+**Bypass:** hookar via Frida a função de validação do certificado e forçá-la a aceitar qualquer entrada.
 
-Mesmo com o certificado no sistema, muitos apps implementam uma defesa extra chamada **SSL Pinning**.
-
-O App diz: *"Eu não confio apenas no Sistema. Eu tenho o desenho exato do certificado do meu servidor guardado no meu código. Se o certificado que eu receber for diferente, mesmo que o sistema diga que é confiável, eu corto a conexão."*
-
-### Flutter e Xamarin: Os "Rebeldes"
-
-Apps desenvolvidos em frameworks cross-platform (Flutter, Xamarin/Maui) **NÃO** usam o proxy do sistema Android e **NÃO** respeitam a TrustStore do Android.
-* **O Problema:** Mesmo com o certificado no Sistema e Proxy configurado no Wi-Fi, o app Flutter ignora tudo e conecta direto.
-* **A Solução:** Você precisa de scripts Frida específicos para Flutter, hookando a biblioteca `libflutter.so`, para desabilitar a verificação de certificado internamente na engine do framework (BoringSSL). O Burp sozinho não funciona aqui.
+> Combo clássico: Frida (bypass do pinning) + Burp Suite (interceptação e manipulação).
 
 ### Network Security Config
 
-Antes de começar, verifique o arquivo `res/xml/network_security_config.xml` (se existir).
-* **CleartextTraffic:** Se `<domain-config cleartextTrafficPermitted="true">` estiver presente, o app aceita HTTP. Isso facilita muito a vida.
-* **Pinning:** Desenvolvedores podem definir o hash do certificado aqui. Se estiver definido, você é obrigado a usar Frida para bypassar.
+Antes de usar o Frida, verifique `res/xml/network_security_config.xml` na análise estática:
 
-É aqui que nossas ferramentas se unem:
-1.  **Burp Suite:** Está pronto para ouvir, mas é bloqueado pelo Pinning.
-2.  **Frida:** Entra em ação. Usamos um script do Frida para hookar a função de comparação de certificados do app e forçá-la a aceitar qualquer coisa.
+- `cleartextTrafficPermitted="true"`: o app aceita HTTP, sem necessidade de TLS bypass
+- `<pin-set>` com hashes definidos: pinning ativo, requer Frida para bypass
 
-> **O Combo Clássico:**
-> Frida + Burp Suite, para hooking de métodos e manipulação de requisições respectivamente.
+### Flutter e Xamarin
 
-## 4. O Que Procurar no Tráfego?
+Frameworks cross-platform (Flutter, Xamarin) não usam o proxy do sistema Android nem respeitam a TrustStore nativa. O Burp sozinho não funciona.
 
-Uma vez que o tráfego está fluindo no Burp, o que buscamos?
+**Solução:** scripts Frida específicos que hookam a biblioteca `libflutter.so` e desabilitam a verificação de certificado diretamente na engine BoringSSL.
 
-* **IDOR (Insecure Direct Object Reference):** Mudar o ID do usuário na URL `/api/users/1234` para ver dados de outra pessoa.
-* **Mass Assignment:** Tentar enviar parâmetros que não estavam na tela original (ex: adicionar `"is_admin": true` no JSON de cadastro).
-* **Vazamento de Dados:** Respostas da API que trazem dados demais (ex: o app mostra só o nome, mas o JSON traz o CPF, endereço e saldo).
+## 4. O Que Buscar no Tráfego
 
----
+Com o tráfego fluindo no Burp, os principais vetores a explorar:
 
-## Resumo da Kill Chain
+| Vulnerabilidade | Técnica |
+|---|---|
+| IDOR | Trocar o ID na URL: `/api/users/1234` -> `/api/users/1` |
+| Mass Assignment | Injetar campos extras no JSON: `"is_admin": true` |
+| Vazamento de dados | Comparar o que o app exibe com o que o JSON retorna |
 
-1.  **ADB:** Conecta no celular.
-2.  **Root:** Nos dá permissão para modificar o sistema.
-3.  **Certificado de Sistema:** Permite o MitM básico.
-4.  **Frida:** Desliga o SSL Pinning.
-5.  **Burp Suite:** Intercepta e explora a API.
+## Kill Chain Resumida
+
+1. **ADB:** conecta ao dispositivo
+2. **Root:** permite modificar o sistema
+3. **Certificado de sistema:** habilita o MitM básico
+4. **Frida:** desativa o SSL Pinning
+5. **Burp Suite:** intercepta e explora a API
