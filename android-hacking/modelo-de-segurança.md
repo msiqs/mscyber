@@ -1,35 +1,51 @@
-# As Regras do Jogo: O Modelo de Segurança
+# Modelo de Segurança do Android
 
-O Android não confia em ninguém. Entender as defesas nativas é vital, pois 90% do trabalho de um exploit moderno é fazer o bypass dessas mitigações.
+O Android implementa múltiplas camadas de defesa independentes. Entender cada uma é necessário porque a maior parte do trabalho em exploits modernos consiste em contorná-las.
 
-## 1. Application Sandbox & UIDs
+## Application Sandbox e UIDs
 
-O Android isola apps usando UIDs do Linux. O App A (UID 10001) não pode ler arquivos do App B (UID 10002).
-* **Ataque:** A meta do atacante aqui é conseguir RCE dentro do contexto do app alvo para herdar o UID dele e ler seus dados privados `/data/data/com.alvo/`.
+O Android isola apps usando UIDs do Linux: o App A (UID 10001) não pode ler arquivos do App B (UID 10002).
 
-## 2. Permissões e Scoped Storage
+**Objetivo do ataque:** obter RCE dentro do contexto do app alvo para herdar seu UID e acessar seus dados privados em `/data/data/com.alvo/`.
 
-Antigamente, a permissão `READ_EXTERNAL_STORAGE` dava acesso total ao cartão SD.
-A partir do **Android 10+**, o Google introduziu o **Scoped Storage**.
+## Permissões e Scoped Storage
 
-* **A Regra:** Mesmo com permissão de leitura, um app só vê seus próprios arquivos e arquivos de mídia públicos. Ele **não consegue** mais ler a pasta de downloads ou arquivos de outros apps soltos no armazenamento.
-* **Impacto no Hacking:** Roubar arquivos via Path Traversal ou Directory Listing ficou muito mais difícil. Agora focamos em explorar FileProviders mal configurados para contornar isso.
+Até o Android 9, a permissão `READ_EXTERNAL_STORAGE` concedia acesso irrestrito ao armazenamento externo. A partir do **Android 10**, o Scoped Storage limita cada app a ver apenas seus próprios arquivos e mídias públicas, sem acesso à pasta de downloads ou arquivos de outros apps.
 
-## 3. Code Signing & Repackaging
+**Impacto:** Path Traversal e Directory Listing ficaram mais difíceis. O foco passa a ser FileProviders mal configurados, que ainda podem permitir acesso indevido a arquivos do sistema.
 
-Todo APK deve ser assinado. O Android usa esquemas de assinatura evolutivos:
-* **v1 (JAR Signing):** Verifica arquivos individuais.
-* **v2/v3/v4 (Full APK Signature):** Verifica o bit-a-bit do arquivo APK inteiro.
+## Code Signing e Repackaging
 
-* **O Obstáculo:** Se tentarmos modificar um APK e recompilar, a assinatura v2/v3 quebra instantaneamente. O Android rejeita a instalação.
-* **A Solução:** Precisamos remover a assinatura original `META-INF`, modificar o código, e **re-assinar** com nossa própria chave usando `apksigner`. Porém, ao mudar a assinatura, perdemos acesso aos dados antigos do app e quebramos integrações com Google Maps/Facebook Login que validam o hash do certificado.
+Todo APK precisa ser assinado. Os esquemas de assinatura existentes são:
 
-## 4. SELinux: O Guarda-Costas
+| Esquema | Cobertura |
+|---|---|
+| v1 (JAR Signing) | Verifica arquivos individuais |
+| v2 / v3 / v4 | Verifica o APK inteiro bit a bit |
 
-O **SELinux** (Security-Enhanced Linux) atua em modo **MAC** (Mandatory Access Control). Ele bloqueia ações baseadas em *políticas*, não apenas em quem você é.
+**Obstáculo:** modificar e recompilar um APK quebra a assinatura v2/v3, e o Android rejeita a instalação.
 
-* **Cenário Real:** Mesmo se você ganhar Root, o SELinux pode impedir que seu shell reverso acesse a câmera ou injete código em outro processo.
-* **Bypass:** Em ambientes de teste, usa-se `setenforce 0` para colocar o SELinux em modo Permissivo. Em exploits reais, precisamos encontrar falhas no kernel para desativar essa política em tempo de execução.
+**Solução:** remover a assinatura original (`META-INF`), aplicar as modificações e re-assinar com chave própria via `apksigner`. A troca de assinatura implica perda dos dados locais do app e quebra integrações que validam o hash do certificado (ex: Google Maps, Facebook Login).
 
-> **Hint: Flags de Depuração**
-> Verifique sempre o `AndroidManifest.xml`. Se `android:debuggable="true"`, o jogo acabou. Você pode conectar o JDWP (Java Debug Wire Protocol) e ter uma shell dentro do app sem precisar de nenhum exploit.
+## SELinux
+
+O SELinux opera em modo MAC (Mandatory Access Control): bloqueia ações com base em políticas, independentemente de quem executa.
+
+**Cenário real:** mesmo com root, o SELinux pode impedir que um shell reverso acesse a câmera ou injete código em outro processo.
+
+**Bypass em ambiente de teste:**
+```bash
+setenforce 0  # coloca o SELinux em modo permissivo
+```
+
+Em exploits reais, é necessário encontrar falhas no kernel para desativar a política em tempo de execução.
+
+## Flag de Depuração
+
+Verifique sempre o `AndroidManifest.xml`. Se `android:debuggable="true"` estiver presente, é possível conectar via JDWP (Java Debug Wire Protocol) e obter um shell dentro do app sem nenhum exploit.
+
+```bash
+adb jdwp              # lista processos com JDWP ativo
+adb forward tcp:8700 jdwp:<pid>
+jdb -attach localhost:8700
+```

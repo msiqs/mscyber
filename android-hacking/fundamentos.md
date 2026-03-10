@@ -1,58 +1,52 @@
-# O Android: Um Linux Paranoico
+# Fundamentos do Android para Pentest
 
-Mobile hacking vem crescendo exponencialmente em demanda e complexidade. Pela abordagem ser diferente de Web ou Infra, muitos criam barreiras mentais. Sendo assim, criei esse conteúdo para desmistificar o android hacking.
-
-Para atacar o Android com eficiência, a primeira chave mental que você precisa virar é entender que ele é, em sua essência, um **Linux Paranoico**.
-
-Diferente de uma distribuição desktop onde o usuário tem ampla liberdade, o Android foi arquitetado sob o princípio do menor privilégio. Cada aplicativo é tratado como um inimigo potencial, rodando com seu próprio User ID e isolado em uma sandbox. O sistema não confia nos aplicativos, e os aplicativos não confiam uns nos outros. Nossa missão é encontrar onde essa "paranoia" falha.
+O Android é um Linux com isolamento rígido entre processos. Cada app roda com seu próprio User ID e é confinado em uma sandbox. Nossa missão é encontrar onde esse isolamento falha.
 
 ## Arquitetura e Superfície de Ataque
 
-Antes de sitiar o reino, precisamos mapear o terreno. O Android é estruturado em camadas. Para um pentester, cada camada exige ferramentas e mindsets específicos.
+O Android é estruturado em camadas. Para um pentester, cada camada representa uma superfície de ataque diferente, com ferramentas e técnicas específicas.
 
 ![Figura 1 - Ilustração da arquitetura](image.png)
 
 ## 1. System Apps
 
-Esta é a elite do sistema. Habitam diretórios protegidos (`/system/app` ou `/system/priv-app`) e são Read-Only, exceto com Root.
+Apps do sistema habitam `/system/app` ou `/system/priv-app` e são somente leitura, exceto com root.
 
-* **O Alvo:** Apps de sistema frequentemente possuem permissões privilegiadas `signature` ou `system`.
-* **Vetor de Ataque:** Se você encontrar uma vulnerabilidade em um app pré-instalado pelo fabricante, você pode conseguir execução de código com privilégios de sistema, o que é quase tão poderoso quanto o Root. É a porta de entrada para persistência de malware avançado que sobrevive ao "Factory Reset" em alguns casos.
+**Vetor: execução privilegiada.** Apps pré-instalados pelo fabricante frequentemente possuem permissões `signature` ou `system`. Uma vulnerabilidade neles pode resultar em execução de código com privilégios de sistema, próximo ao root, e em alguns casos com persistência que sobrevive ao factory reset.
 
 ## 2. Java API Framework
 
-É a camada que expõe o hardware para os apps. Para Offensive Security, este é o palco da **Engenharia Reversa Dinâmica**.
+Camada que expõe o hardware para os apps. É onde ocorre a engenharia reversa dinâmica com ferramentas como o **Frida**.
 
-É aqui que manipulamos a lógica de negócios. Ferramentas como **Frida** brilham nesta camada. As vulnerabilidades aqui geralmente são de **Lógica e IPC**, Intents mal configurados, Broadcasts perigosos e vazamento de dados via Logs.
+**Vetores:** lógica de negócio mal implementada, Intents exportados sem proteção, Broadcasts sem validação de origem e vazamento de dados via logs.
 
 ## 3. Native C/C++ Libraries
 
-Abaixo do conforto do Java, reside o "submundo" das bibliotecas nativas. O Android delega tarefas de alta performance (Renderização, Áudio, SSL, Processamento de Imagem) para código C/C++.
+Bibliotecas nativas usadas para tarefas de alta performance: renderização, áudio, SSL, processamento de imagem.
 
-* **Vetor de Ataque:** **Memory Corruption**. Diferente do Java, aqui não há Garbage Collector. Erros manuais de gerenciamento de memória levam a Buffer Overflows, Use-After-Free e Integer Overflows. Um exploit aqui bypassa totalmente a Sandbox do Java.
+**Vetor: memory corruption.** Sem garbage collector, erros de gerenciamento manual de memória levam a Buffer Overflow, Use-After-Free e Integer Overflow. Exploits aqui contornam completamente a sandbox do Java.
 
-## 4. Android Runtime (ART) 
+## 4. Android Runtime (ART)
 
-Aqui reside uma diferença crucial para o pentester moderno.
-Antigamente (Android 4.4-), usava-se a Dalvik (JIT). O Android moderno usa o **ART**, que opera num modelo híbrido complexo:
+O ART substitui a Dalvik e opera com um ciclo de compilação híbrido:
 
-1.  **Instalação:** O código não é 100% compilado na hora, para economizar espaço.
-2.  **Execução:** O código começa sendo **Interpretado**.
-3.  **JIT (Just-In-Time):** Se um trecho de código é muito usado, ele é compilado para nativo em tempo real.
-4.  **AOT (Ahead-Of-Time):** Quando o celular está carregando e ocioso, o daemon compila tudo para código de máquina nativo `.oat` / `.elf`.
+1. **Instalação:** código parcialmente compilado para economizar espaço
+2. **Execução inicial:** código interpretado
+3. **JIT (Just-In-Time):** trechos frequentes são compilados em tempo real
+4. **AOT (Ahead-Of-Time):** quando o dispositivo está ocioso, o daemon compila tudo para código nativo (`.oat` / `.elf`)
 
-**Por que isso importa para o Hacking?**
-Isso afeta diretamente o **Hooking**. Ferramentas como o Frida precisam lidar com métodos que podem estar em estados diferentes (interpretados vs. nativos). Às vezes, um hook falha porque o ART "inlinou" o método. Entender o ciclo de vida do Zygote é vital para criar hooks persistentes.
+**Impacto no hooking:** o Frida precisa lidar com métodos em estados diferentes (interpretado vs. nativo). Hooks podem falhar quando o ART faz inlining de métodos. Entender o ciclo de vida do Zygote é necessário para criar hooks estáveis.
 
 ## 5. Hardware Abstraction Layer (HAL)
 
-A HAL é onde o Android genérico do Google encontra o hardware proprietário da Samsung, Xiaomi, Motorola.
+Camada onde o Android genérico encontra o hardware proprietário dos fabricantes (Samsung, Xiaomi, Motorola).
 
-* **Vetor de Ataque:** **Drivers Proprietários**. O código do Google é auditado. O código do driver da câmera ou do sensor de digital feito às pressas pelo fabricante do chip... nem sempre. Muitas falhas de escalação de privilégio local (LPE) nascem aqui.
+**Vetor: drivers proprietários.** O código do Google é auditado, mas drivers de câmera ou sensores biométricos desenvolvidos pelos fabricantes de chips frequentemente não são. Muitas falhas de escalação de privilégio local (LPE) têm origem aqui.
 
 ## 6. Linux Kernel
 
-O alicerce. Baseado no Linux, mas altamente modificado (wakelocks, binder, ashmem).
+Base do sistema, com modificações específicas do Android: wakelocks, Binder IPC, ashmem.
 
-* **Binder (IPC):** O "carteiro" do Android. Quase toda comunicação entre processos passa por aqui. Explorar o driver do Binder permite interceptar mensagens globais do sistema.
-* **Rooting:** Ganhar acesso ao Kernel é o objetivo final. Com Root, as Sandboxes desaparecem, o SELinux pode ser desligado e você se torna o "Deus" do dispositivo.
+**Binder:** mecanismo de IPC pelo qual quase toda comunicação entre processos passa. Explorar o driver do Binder permite interceptar mensagens globais do sistema.
+
+**Rooting:** comprometer o kernel elimina as sandboxes, permite desativar o SELinux e concede controle total sobre o dispositivo.
