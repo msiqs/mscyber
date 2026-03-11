@@ -39,5 +39,5 @@ Sou um profissional de segurança ofensiva com certificações práticas e exper
 ---
 
 ### Conecte-se comigo
-* **LinkedIn:** [linkedin.com/matheus-siqueira](https://www.linkedin.com/in/matheus-siqueira-961a522b1/)
+* **LinkedIn:** [linkedin.com/matheus-siqueira](https://www.linkedin.com/in/mscyber/)
 * **GitHub:** [github.com/msiqs](https://github.com/msiqs)
