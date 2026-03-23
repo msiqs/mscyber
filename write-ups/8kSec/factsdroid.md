@@ -6,7 +6,7 @@
 **Ambiente:** Emulador Android (x86_64)
 **Framework:** Flutter (Dart VM 3.7.2)
 
-Aplicações Flutter compiladas via **AOT (Ahead-of-Time)** apresentam uma superfície de ataque fundamentalmente distinta do ecossistema Android nativo (Java/Kotlin). Os pontos críticos identificados foram:
+Aplicações Flutter compiladas via **AOT** apresentam uma superfície de ataque fundamentalmente distinta do ecossistema Android nativo (Java/Kotlin). Os pontos críticos identificados foram:
 
 | Característica | Implicação Ofensiva |
 |---|---|
@@ -14,13 +14,13 @@ Aplicações Flutter compiladas via **AOT (Ahead-of-Time)** apresentam uma super
 | **Criptografia Estática** | A validação X.509 não usa a Trust Store do sistema é gerenciada em memória pelo BoringSSL embarcado |
 | **Stripped Binaries** | Ausência de tabela de símbolos; exige RE focada em padrões de Assembly e XREFs |
 
-**Objetivo:** Anular as defesas criptográficas (SSL Pinning) e as políticas de roteamento para expor a comunicação com a API backend em texto claro.
+**Objetivo:** Anular as defesas de SSL Pinning e as políticas de roteamento para expor a comunicação com a API backend em texto claro.
 
 ---
 
 ## 2. Fase 1 - Anulação de Telemetria Defensiva (RASP)
 
-Durante a inicialização a frio, a auditoria do `logcat` e do SELinux revelou mecanismos de **Anti-Emulation/RASP**. O aplicativo (PID 6637) instanciou subprocessos para ler propriedades do host, invocando `/system/bin/getprop` para extrair a flag `ro.debuggable`.
+Durante a inicialização a frio, a auditoria do `logcat` e do SELinux revelou mecanismos de **Anti-Emulation/RASP**. O aplicativo instanciou subprocessos para ler propriedades do host, invocando `/system/bin/getprop` para extrair a flag `ro.debuggable`.
 
 ### Vetor de Ataque Camuflagem Ambiental via Frida
 
@@ -34,7 +34,7 @@ Dois pontos de interceptação foram instrumentados dinamicamente:
 
 ---
 
-## 3. Fase 2 - Mapeamento de Memória e Engenharia Reversa (BoringSSL)
+## 3. Fase 2 - Mapeamento de Memória e Engenharia Reversa
 
 A tentativa inicial de interceptação de tráfego resultou no encerramento da conexão TLS com o seguinte artefato no console Dart:
 
@@ -52,8 +52,8 @@ O erro apontava para a **linha 391** (`0x187` em hexadecimal) do código-fonte C
 4. Pseudocódigo (Decompile) identificou `FUN_008c4c99` função que continha a lógica de falha, acionando `ERR_put_error` com o parâmetro de linha `0x187`.
 
 **Semântica da função:** máquina de estados de validação do certificado par.
-- Retorno `0` → sucesso (handshake TLS continua)
-- Retorno `!= 0` → falha (conexão bloqueada)
+- Retorno `0` → sucesso, handshake TLS continua
+- Retorno `!= 0` → falha, conexão bloqueada
 
 ### Cálculo do Offset
 
@@ -82,11 +82,11 @@ A estratégia evoluiu de interceptação passiva para **substituição ativa**:
 
 ---
 
-## 5. Fase 4 - Sequestro de Rota na Camada de Rede (Netfilter)
+## 5. Fase 4 - Sequestro de Rota na Camada de Rede
 
 Com a proteção criptográfica destruída, restou contornar a **evasão de proxy nativa do Flutter**: a Dart VM não obedece às configurações de proxy do Wi-Fi do sistema.
 
-### Solução Redirecionamento via iptables (NAT/Netfilter)
+### Solução Redirecionamento via iptables
 
 Regras de NAT injetadas no kernel do Android para forçar todo tráfego de saída para o listener da máquina atacante:
 
